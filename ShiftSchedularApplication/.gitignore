@@ -1,0 +1,26 @@
+## Ignore Visual Studio temporary files, build results, and
+## user-generated files
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build results
+bin/
+obj/
+*.dll
+*.exe
+
+# Publish output
+wwwroot/dist/
+wwwroot/node_modules/
+publish/
+
+# Logs
+*.log
+
+# Others
+*.dbmdl
+*.bak
+*.sqlite

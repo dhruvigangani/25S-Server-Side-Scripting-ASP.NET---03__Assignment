@@ -1,0 +1,92 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|d:\\summer term 2025\\javascript frameworks\\shiftschedularapplication\\shiftschedularapplication\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|solutionrelative:shiftschedularapplication\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|d:\\summer term 2025\\javascript frameworks\\shiftschedularapplication\\shiftschedularapplication\\models\\shift.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|solutionrelative:shiftschedularapplication\\models\\shift.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|d:\\summer term 2025\\javascript frameworks\\shiftschedularapplication\\shiftschedularapplication\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|solutionrelative:shiftschedularapplication\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|d:\\summer term 2025\\javascript frameworks\\shiftschedularapplication\\shiftschedularapplication\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|solutionrelative:shiftschedularapplication\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": ".gitignore",
+              "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\.gitignore",
+              "RelativeDocumentMoniker": "ShiftSchedularApplication\\.gitignore",
+              "ToolTip": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\.gitignore",
+              "RelativeToolTip": "ShiftSchedularApplication\\.gitignore",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-07-25T04:50:35.934Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Shift.cs",
+              "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Models\\Shift.cs",
+              "RelativeDocumentMoniker": "ShiftSchedularApplication\\Models\\Shift.cs",
+              "ToolTip": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Models\\Shift.cs",
+              "RelativeToolTip": "ShiftSchedularApplication\\Models\\Shift.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-25T04:26:48.268Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Program.cs",
+              "RelativeDocumentMoniker": "ShiftSchedularApplication\\Program.cs",
+              "ToolTip": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Program.cs",
+              "RelativeToolTip": "ShiftSchedularApplication\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-25T04:23:59.966Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "ShiftSchedularApplication\\appsettings.Development.json",
+              "ToolTip": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\appsettings.Development.json",
+              "RelativeToolTip": "ShiftSchedularApplication\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-07-25T04:21:39.331Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{56df62a4-05a3-4e5b-aa1a-99371ccfb997}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
