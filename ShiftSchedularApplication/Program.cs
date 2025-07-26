@@ -14,7 +14,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = false; // For dev: false, set true for prod
+    options.SignIn.RequireConfirmedAccount = false; 
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
