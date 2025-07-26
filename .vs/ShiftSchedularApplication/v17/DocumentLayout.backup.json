@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|Solution Items{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\Dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|Solution Items{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|solutionrelative:Dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|d:\\summer term 2025\\javascript frameworks\\shiftschedularapplication\\shiftschedularapplication\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|solutionrelative:shiftschedularapplication\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|d:\\summer term 2025\\javascript frameworks\\shiftschedularapplication\\shiftschedularapplication\\shiftschedularapplication.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
@@ -167,13 +167,13 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Dockerfile",
-              "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\Dockerfile",
-              "RelativeDocumentMoniker": "Dockerfile",
-              "ToolTip": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\Dockerfile",
-              "RelativeToolTip": "Dockerfile",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
+              "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Dockerfile",
+              "RelativeDocumentMoniker": "ShiftSchedularApplication\\Dockerfile",
+              "ToolTip": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Dockerfile",
+              "RelativeToolTip": "ShiftSchedularApplication\\Dockerfile",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-07-26T05:11:58.104Z",
+              "WhenOpened": "2025-07-26T05:16:57.084Z",
               "EditorCaption": ""
             },
             {
@@ -186,7 +186,8 @@
               "RelativeToolTip": "ShiftSchedularApplication\\Views\\Punches\\Index.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-26T03:13:05.133Z"
+              "WhenOpened": "2025-07-26T03:13:05.133Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
