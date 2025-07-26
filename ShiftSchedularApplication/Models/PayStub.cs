@@ -1,14 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ShiftScheduler.Models
+namespace ShiftSchedularApplication.Models
 {
     public class PayStub
     {
         public int Id { get; set; }
 
         [Required]
-        public string EmployeeId { get; set; }
+        public string EmployeeId { get; set; }  // FK
 
         [Required]
         public decimal HoursWorked { get; set; }
@@ -18,6 +18,7 @@ namespace ShiftScheduler.Models
 
         public decimal TotalPay => HoursWorked * HourlyRate;
 
+        [Required]
         public DateTime PayDate { get; set; }
     }
 }

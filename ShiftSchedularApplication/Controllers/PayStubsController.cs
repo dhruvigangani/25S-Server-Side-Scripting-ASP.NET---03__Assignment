@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ShiftSchedularApplication.Data;
-using ShiftScheduler.Models;
+using ShiftSchedularApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ShiftSchedularApplication.Controllers
 {
@@ -19,39 +20,30 @@ namespace ShiftSchedularApplication.Controllers
             _context = context;
         }
 
-        // GET: PayStubs
+        // Index & Details = Allow Anonymous Access
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(await _context.PayStubs.ToListAsync());
         }
 
-        // GET: PayStubs/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var payStub = await _context.PayStubs
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (payStub == null)
-            {
-                return NotFound();
-            }
+            if (payStub == null) return NotFound();
 
             return View(payStub);
         }
 
-        // GET: PayStubs/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        // All the following actions require login
+        [Authorize]
+        public IActionResult Create() => View();
 
-        // POST: PayStubs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,EmployeeId,HoursWorked,HourlyRate,PayDate")] PayStub payStub)
@@ -65,33 +57,23 @@ namespace ShiftSchedularApplication.Controllers
             return View(payStub);
         }
 
-        // GET: PayStubs/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var payStub = await _context.PayStubs.FindAsync(id);
-            if (payStub == null)
-            {
-                return NotFound();
-            }
+            if (payStub == null) return NotFound();
+
             return View(payStub);
         }
 
-        // POST: PayStubs/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeId,HoursWorked,HourlyRate,PayDate")] PayStub payStub)
         {
-            if (id != payStub.Id)
-            {
-                return NotFound();
-            }
+            if (id != payStub.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -102,39 +84,27 @@ namespace ShiftSchedularApplication.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PayStubExists(payStub.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!PayStubExists(payStub.Id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
             return View(payStub);
         }
 
-        // GET: PayStubs/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var payStub = await _context.PayStubs
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (payStub == null)
-            {
-                return NotFound();
-            }
+            if (payStub == null) return NotFound();
 
             return View(payStub);
         }
 
-        // POST: PayStubs/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -143,9 +113,9 @@ namespace ShiftSchedularApplication.Controllers
             if (payStub != null)
             {
                 _context.PayStubs.Remove(payStub);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShiftSchedularApplication.Data;
 
@@ -11,9 +12,11 @@ using ShiftSchedularApplication.Data;
 namespace ShiftSchedularApplication.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250726013125_Fixerrors")]
+    partial class Fixerrors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,35 +227,7 @@ namespace ShiftSchedularApplication.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ShiftSchedularApplication.Models.Availability", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Day")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EmployeeId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<TimeSpan>("EndAvailability")
-                        .HasColumnType("time");
-
-                    b.Property<TimeSpan>("StartAvailability")
-                        .HasColumnType("time");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("Availabilities");
-                });
-
-            modelBuilder.Entity("ShiftSchedularApplication.Models.PayStub", b =>
+            modelBuilder.Entity("Shift", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -262,60 +237,7 @@ namespace ShiftSchedularApplication.Data.Migrations
 
                     b.Property<string>("EmployeeId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<decimal>("HourlyRate")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("HoursWorked")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("PayDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("PayStubs");
-                });
-
-            modelBuilder.Entity("ShiftSchedularApplication.Models.Punch", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("EmployeeId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("PunchInTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("PunchOutTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("Punches");
-                });
-
-            modelBuilder.Entity("ShiftSchedularApplication.Models.Shift", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("EmployeeId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
@@ -334,9 +256,82 @@ namespace ShiftSchedularApplication.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeId");
-
                     b.ToTable("Shifts");
+                });
+
+            modelBuilder.Entity("ShiftScheduler.Models.Availability", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Day")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("EndAvailability")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("StartAvailability")
+                        .HasColumnType("time");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Availabilities");
+                });
+
+            modelBuilder.Entity("ShiftScheduler.Models.PayStub", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EmployeeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("HourlyRate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("HoursWorked")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("PayDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PayStubs");
+                });
+
+            modelBuilder.Entity("ShiftScheduler.Models.Punch", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EmployeeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PunchInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PunchOutTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Punches");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -387,42 +382,6 @@ namespace ShiftSchedularApplication.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ShiftSchedularApplication.Models.Availability", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ShiftSchedularApplication.Models.PayStub", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ShiftSchedularApplication.Models.Punch", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ShiftSchedularApplication.Models.Shift", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

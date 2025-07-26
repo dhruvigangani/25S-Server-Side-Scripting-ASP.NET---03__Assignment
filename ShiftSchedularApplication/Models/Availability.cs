@@ -1,21 +1,24 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ShiftScheduler.Models
+
+namespace ShiftSchedularApplication.Models
 {
     public class Availability
     {
         public int Id { get; set; }
 
         [Required]
-        public string EmployeeId { get; set; }
+        public string EmployeeId { get; set; }  // FK to AspNetUsers.Id
 
         [Required]
         public DayOfWeek Day { get; set; }
 
+        [Required]
         public TimeSpan StartAvailability { get; set; }
+
+        [Required]
         public TimeSpan EndAvailability { get; set; }
-
-
     }
 }

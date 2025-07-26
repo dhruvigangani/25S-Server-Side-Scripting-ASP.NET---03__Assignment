@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ShiftSchedularApplication.Data;
+using ShiftSchedularApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ShiftSchedularApplication.Controllers
 {
+    [Authorize]
     public class ShiftsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,13 +22,14 @@ namespace ShiftSchedularApplication.Controllers
         {
             _context = context;
         }
-
+        [AllowAnonymous]
         // GET: Shifts
         public async Task<IActionResult> Index()
         {
             return View(await _context.Shifts.ToListAsync());
         }
 
+        [AllowAnonymous]
         // GET: Shifts/Details/5
         public async Task<IActionResult> Details(int? id)
         {

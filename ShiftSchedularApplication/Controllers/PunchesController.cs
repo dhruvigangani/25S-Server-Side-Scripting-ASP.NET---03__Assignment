@@ -6,10 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ShiftSchedularApplication.Data;
-using ShiftScheduler.Models;
+using ShiftSchedularApplication.Models;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace ShiftSchedularApplication.Controllers
 {
+    [Authorize] // Applies to ALL actions by default
     public class PunchesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,12 +23,14 @@ namespace ShiftSchedularApplication.Controllers
         }
 
         // GET: Punches
+        [AllowAnonymous] // Let anyone view the list
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ErrorViewModels.ToListAsync());
+            return View(await _context.Punches.ToListAsync());
         }
 
         // GET: Punches/Details/5
+        [AllowAnonymous] // Let anyone view details
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,7 +38,7 @@ namespace ShiftSchedularApplication.Controllers
                 return NotFound();
             }
 
-            var punch = await _context.ErrorViewModels
+            var punch = await _context.Punches
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (punch == null)
             {
@@ -50,8 +55,6 @@ namespace ShiftSchedularApplication.Controllers
         }
 
         // POST: Punches/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,EmployeeId,PunchInTime,PunchOutTime")] Punch punch)
@@ -73,7 +76,7 @@ namespace ShiftSchedularApplication.Controllers
                 return NotFound();
             }
 
-            var punch = await _context.ErrorViewModels.FindAsync(id);
+            var punch = await _context.Punches.FindAsync(id);
             if (punch == null)
             {
                 return NotFound();
@@ -82,8 +85,6 @@ namespace ShiftSchedularApplication.Controllers
         }
 
         // POST: Punches/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeId,PunchInTime,PunchOutTime")] Punch punch)
@@ -124,7 +125,7 @@ namespace ShiftSchedularApplication.Controllers
                 return NotFound();
             }
 
-            var punch = await _context.ErrorViewModels
+            var punch = await _context.Punches
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (punch == null)
             {
@@ -139,10 +140,10 @@ namespace ShiftSchedularApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var punch = await _context.ErrorViewModels.FindAsync(id);
+            var punch = await _context.Punches.FindAsync(id);
             if (punch != null)
             {
-                _context.ErrorViewModels.Remove(punch);
+                _context.Punches.Remove(punch);
             }
 
             await _context.SaveChangesAsync();
@@ -151,7 +152,7 @@ namespace ShiftSchedularApplication.Controllers
 
         private bool PunchExists(int id)
         {
-            return _context.ErrorViewModels.Any(e => e.Id == id);
+            return _context.Punches.Any(e => e.Id == id);
         }
     }
 }

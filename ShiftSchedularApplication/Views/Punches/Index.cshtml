@@ -1,14 +1,17 @@
-﻿@model IEnumerable<ShiftScheduler.Models.Punch>
-
+﻿@model IEnumerable<ShiftSchedularApplication.Models.Punch>
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (User.Identity.IsAuthenticated)
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+
 <table class="table">
     <thead>
         <tr>
@@ -21,27 +24,35 @@
             <th>
                 @Html.DisplayNameFor(model => model.PunchOutTime)
             </th>
-            <th></th>
+            @* Only show Action column header if user is authenticated *@
+            @if (User.Identity.IsAuthenticated)
+            {
+                <th></th>
+            }
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmployeeId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PunchInTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PunchOutTime)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmployeeId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PunchInTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PunchOutTime)
+                </td>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                }
+            </tr>
+        }
     </tbody>
 </table>
