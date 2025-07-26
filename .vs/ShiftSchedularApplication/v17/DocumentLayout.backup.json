@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|d:\\summer term 2025\\javascript frameworks\\shiftschedularapplication\\shiftschedularapplication\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|solutionrelative:shiftschedularapplication\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|d:\\summer term 2025\\javascript frameworks\\shiftschedularapplication\\shiftschedularapplication\\views\\punches\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|solutionrelative:shiftschedularapplication\\views\\punches\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|d:\\summer term 2025\\javascript frameworks\\shiftschedularapplication\\shiftschedularapplication\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -13,18 +13,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|d:\\summer term 2025\\javascript frameworks\\shiftschedularapplication\\shiftschedularapplication\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|solutionrelative:shiftschedularapplication\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|d:\\summer term 2025\\javascript frameworks\\shiftschedularapplication\\shiftschedularapplication\\views\\shifts\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|solutionrelative:shiftschedularapplication\\views\\shifts\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|d:\\summer term 2025\\javascript frameworks\\shiftschedularapplication\\shiftschedularapplication\\views\\punches\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|solutionrelative:shiftschedularapplication\\views\\punches\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|d:\\summer term 2025\\javascript frameworks\\shiftschedularapplication\\shiftschedularapplication\\views\\punches\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|solutionrelative:shiftschedularapplication\\views\\punches\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{ECA78BC9-4EBB-42D2-A005-DCAF57447C06}|ShiftSchedularApplication\\ShiftSchedularApplication.csproj|d:\\summer term 2025\\javascript frameworks\\shiftschedularapplication\\shiftschedularapplication\\views\\paystubs\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -166,55 +154,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Dockerfile",
-              "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Dockerfile",
-              "RelativeDocumentMoniker": "ShiftSchedularApplication\\Dockerfile",
-              "ToolTip": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Dockerfile",
-              "RelativeToolTip": "ShiftSchedularApplication\\Dockerfile",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAA2AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-07-26T04:40:59.845Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\Shifts\\Index.cshtml",
-              "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\Shifts\\Index.cshtml",
-              "ToolTip": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\Shifts\\Index.cshtml",
-              "RelativeToolTip": "ShiftSchedularApplication\\Views\\Shifts\\Index.cshtml",
-              "ViewState": "AgIAADcAAAAAAAAAAAAQwD0AAAA3AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-26T03:14:38.012Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Edit.cshtml",
-              "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\Punches\\Edit.cshtml",
-              "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\Punches\\Edit.cshtml",
-              "ToolTip": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\Punches\\Edit.cshtml",
-              "RelativeToolTip": "ShiftSchedularApplication\\Views\\Punches\\Edit.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-26T03:13:49.337Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
               "Title": "Index.cshtml",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\Punches\\Index.cshtml",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\Punches\\Index.cshtml",
               "ToolTip": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\Punches\\Index.cshtml",
               "RelativeToolTip": "ShiftSchedularApplication\\Views\\Punches\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-26T03:13:05.133Z"
+              "WhenOpened": "2025-07-26T03:13:05.133Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 3,
               "Title": "Index.cshtml",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\PayStubs\\Index.cshtml",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\PayStubs\\Index.cshtml",
@@ -226,7 +178,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 8,
               "Title": "ShiftsController.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Controllers\\ShiftsController.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Controllers\\ShiftsController.cs",
@@ -262,7 +214,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 5,
               "Title": "AvailabilitiesController.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Controllers\\AvailabilitiesController.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Controllers\\AvailabilitiesController.cs",
@@ -274,7 +226,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 9,
               "Title": "HomeController.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Controllers\\HomeController.cs",
@@ -286,7 +238,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 7,
               "Title": "PunchesController.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Controllers\\PunchesController.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Controllers\\PunchesController.cs",
@@ -298,7 +250,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 6,
               "Title": "PayStubsController.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Controllers\\PayStubsController.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Controllers\\PayStubsController.cs",
@@ -310,7 +262,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 4,
               "Title": "Index.cshtml",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\Availabilities\\Index.cshtml",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\Availabilities\\Index.cshtml",
@@ -322,7 +274,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 10,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Data\\ApplicationDbContext.cs",
@@ -334,7 +286,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 14,
               "Title": "Create.cshtml",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\PayStubs\\Create.cshtml",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\PayStubs\\Create.cshtml",
@@ -346,7 +298,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 13,
               "Title": "Delete.cshtml",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\PayStubs\\Delete.cshtml",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\PayStubs\\Delete.cshtml",
@@ -358,7 +310,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 11,
               "Title": "Edit.cshtml",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\PayStubs\\Edit.cshtml",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\PayStubs\\Edit.cshtml",
@@ -370,7 +322,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 12,
               "Title": "Details.cshtml",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\PayStubs\\Details.cshtml",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\PayStubs\\Details.cshtml",
@@ -382,7 +334,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 16,
               "Title": "Edit.cshtml",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\Availabilities\\Edit.cshtml",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\Availabilities\\Edit.cshtml",
@@ -394,7 +346,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 17,
               "Title": "Details.cshtml",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\Availabilities\\Details.cshtml",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\Availabilities\\Details.cshtml",
@@ -406,7 +358,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 18,
               "Title": "Delete.cshtml",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\Availabilities\\Delete.cshtml",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\Availabilities\\Delete.cshtml",
@@ -418,7 +370,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 15,
               "Title": "Index.cshtml",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\Home\\Index.cshtml",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\Home\\Index.cshtml",
@@ -430,7 +382,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 19,
               "Title": "Create.cshtml",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\Availabilities\\Create.cshtml",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\Availabilities\\Create.cshtml",
@@ -442,7 +394,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 20,
               "Title": "Availability.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Models\\Availability.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Models\\Availability.cs",
@@ -454,7 +406,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 21,
               "Title": "PayStub.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Models\\PayStub.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Models\\PayStub.cs",
@@ -466,7 +418,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 22,
               "Title": "Punch.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Models\\Punch.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Models\\Punch.cs",
@@ -478,7 +430,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 23,
               "Title": "Shift.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Models\\Shift.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Models\\Shift.cs",
@@ -490,7 +442,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 24,
               "Title": "ErrorViewModel.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Models\\ErrorViewModel.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Models\\ErrorViewModel.cs",
@@ -502,7 +454,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 32,
               "Title": "20250726013125_Fixerrors.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Data\\Migrations\\20250726013125_Fixerrors.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Data\\Migrations\\20250726013125_Fixerrors.cs",
@@ -514,7 +466,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 33,
               "Title": "20250726012439_FixPunches.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Data\\Migrations\\20250726012439_FixPunches.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Data\\Migrations\\20250726012439_FixPunches.cs",
@@ -526,7 +478,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 34,
               "Title": "20250726011447_AddPunchModel.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Data\\Migrations\\20250726011447_AddPunchModel.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Data\\Migrations\\20250726011447_AddPunchModel.cs",
@@ -538,7 +490,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 26,
               "Title": "web.config",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\shiftschedularapp\\web.config",
               "RelativeDocumentMoniker": "..\\..\\shiftschedularapp\\web.config",
@@ -550,7 +502,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 25,
               "Title": "ShiftSchedularApplication.csproj",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\ShiftSchedularApplication.csproj",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\ShiftSchedularApplication.csproj",
@@ -562,7 +514,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 27,
               "Title": "launchSettings.json",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Properties\\launchSettings.json",
@@ -574,7 +526,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 28,
               "Title": "20250725161225_InitialCreate.cs",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Data\\Migrations\\20250725161225_InitialCreate.cs",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Data\\Migrations\\20250725161225_InitialCreate.cs",
@@ -586,7 +538,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 29,
               "Title": "_Layout.cshtml.css",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\Views\\Shared\\_Layout.cshtml.css",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\Views\\Shared\\_Layout.cshtml.css",
@@ -598,7 +550,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 30,
               "Title": ".gitignore",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\.gitignore",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\.gitignore",
@@ -610,7 +562,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 31,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "D:\\SUMMER TERM 2025\\JavaScript Frameworks\\ShiftSchedularApplication\\ShiftSchedularApplication\\appsettings.Development.json",
               "RelativeDocumentMoniker": "ShiftSchedularApplication\\appsettings.Development.json",
