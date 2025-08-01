@@ -10,7 +10,24 @@ var configConnection = builder.Configuration.GetConnectionString("DefaultConnect
 Console.WriteLine($"DATABASE_URL: {(string.IsNullOrEmpty(databaseUrl) ? "NOT SET" : "SET")}");
 Console.WriteLine($"Config Connection: {(string.IsNullOrEmpty(configConnection) ? "NOT SET" : "SET")}");
 
-var connectionString = databaseUrl
+// Convert PostgreSQL URL to connection string if needed
+var connectionString = databaseUrl;
+if (!string.IsNullOrEmpty(databaseUrl) && databaseUrl.StartsWith("postgresql://"))
+{
+    // Parse the PostgreSQL URL format
+    var uri = new Uri(databaseUrl);
+    var username = uri.UserInfo.Split(':')[0];
+    var password = uri.UserInfo.Split(':')[1];
+    var host = uri.Host;
+    var port = uri.Port;
+    var database = uri.AbsolutePath.TrimStart('/');
+    
+    connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true;";
+    
+    Console.WriteLine($"Converted PostgreSQL URL to connection string format");
+}
+
+connectionString = connectionString
     ?? configConnection
     ?? throw new InvalidOperationException("DATABASE_URL environment variable not found. Please set it in Render environment variables.");
 
