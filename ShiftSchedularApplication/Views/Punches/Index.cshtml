@@ -5,7 +5,7 @@
 
 <h1>Index</h1>
 
-@if (User.Identity.IsAuthenticated)
+@if (User?.Identity?.IsAuthenticated == true)
 {
     <p>
         <a asp-action="Create">Create New</a>
@@ -25,7 +25,7 @@
                 @Html.DisplayNameFor(model => model.PunchOutTime)
             </th>
             @* Only show Action column header if user is authenticated *@
-            @if (User.Identity.IsAuthenticated)
+            @if (User?.Identity?.IsAuthenticated == true)
             {
                 <th></th>
             }
@@ -44,7 +44,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.PunchOutTime)
                 </td>
-                @if (User.Identity.IsAuthenticated)
+                @if (User?.Identity?.IsAuthenticated == true)
                 {
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

@@ -5,7 +5,7 @@
 
 <h1>Index</h1>
 
-@if (User.Identity.IsAuthenticated)
+@if (User?.Identity?.IsAuthenticated == true)
 {
     <p>
         <a asp-action="Create">Create New</a>
@@ -27,7 +27,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.PayDate)
             </th>
-            @if (User.Identity.IsAuthenticated)
+            @if (User?.Identity?.IsAuthenticated == true)
             {
                 <th>Actions</th>
             }
@@ -49,7 +49,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.PayDate)
                 </td>
-                @if (User.Identity.IsAuthenticated)
+                @if (User?.Identity?.IsAuthenticated == true)
                 {
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ShiftSchedularApplication.Data;
 using System.Linq;
 using System.IO;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,12 +78,9 @@ if (!string.IsNullOrEmpty(clientId))
 
 builder.Services.AddControllersWithViews();
 
-// Configure DataProtection for production
-if (!builder.Environment.IsDevelopment())
-{
-    builder.Services.AddDataProtection()
-        .PersistKeysToFileSystem(new DirectoryInfo("/tmp/keys"));
-}
+// Configure DataProtection for containerized environments
+// Use the default configuration which works well in containers
+builder.Services.AddDataProtection();
 
 var app = builder.Build();
 
