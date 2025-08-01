@@ -9,7 +9,7 @@ COPY ["ShiftSchedularApplication.csproj", "./"]
 RUN dotnet restore "ShiftSchedularApplication.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "ShiftSchedularApplication.csproj" -c Release -o /app/build
+RUN dotnet build "ShiftSchedularApplication.csproj" -c Release -o /app/build --no-restore
 
 FROM build AS publish
 RUN dotnet publish "ShiftSchedularApplication.csproj" -c Release -o /app/publish
