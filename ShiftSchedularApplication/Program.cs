@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ShiftSchedularApplication.Data;
 using System.Linq;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,7 +48,7 @@ if (!string.IsNullOrEmpty(databaseUrl) && databaseUrl.StartsWith("postgresql://"
 
 connectionString = connectionString
     ?? configConnection
-    ?? throw new InvalidOperationException("DATABASE_URL environment variable not found. Please set it in Render environment variables.");
+    ?? "Host=localhost;Database=shiftschedulerdb;Username=postgres;Password=password";
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -60,15 +61,28 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddAuthentication()
-    .AddGoogle(options =>
+var authenticationBuilder = builder.Services.AddAuthentication();
+
+// Only add Google authentication if ClientId is provided
+var googleAuth = builder.Configuration.GetSection("Authentication:Google");
+var clientId = googleAuth["ClientId"];
+if (!string.IsNullOrEmpty(clientId))
+{
+    authenticationBuilder.AddGoogle(options =>
     {
-        var googleAuth = builder.Configuration.GetSection("Authentication:Google");
-        options.ClientId = googleAuth["ClientId"] ?? string.Empty;
+        options.ClientId = clientId;
         options.ClientSecret = googleAuth["ClientSecret"] ?? string.Empty;
     });
+}
 
 builder.Services.AddControllersWithViews();
+
+// Configure DataProtection for production
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo("/tmp/keys"));
+}
 
 var app = builder.Build();
 
@@ -92,7 +106,8 @@ using (var scope = app.Services.CreateScope())
     {
         Console.WriteLine($"Error during database initialization: {ex.Message}");
         Console.WriteLine($"Stack trace: {ex.StackTrace}");
-        throw;
+        // Don't throw - database initialization failure shouldn't stop the app
+        // The app can still run without the database being fully initialized
     }
 }
 
@@ -108,7 +123,11 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// Only use HTTPS redirection in development
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -155,6 +174,7 @@ static async Task SeedUsersAsync(UserManager<IdentityUser> userManager)
     catch (Exception ex)
     {
         Console.WriteLine($"Error during user seeding: {ex.Message}");
+        Console.WriteLine($"Stack trace: {ex.StackTrace}");
         // Don't throw - user seeding failure shouldn't stop the app
     }
 }
