@@ -4,9 +4,15 @@ using ShiftSchedularApplication.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? Environment.GetEnvironmentVariable("DATABASE_URL")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+var configConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+
+Console.WriteLine($"DATABASE_URL: {(string.IsNullOrEmpty(databaseUrl) ? "NOT SET" : "SET")}");
+Console.WriteLine($"Config Connection: {(string.IsNullOrEmpty(configConnection) ? "NOT SET" : "SET")}");
+
+var connectionString = databaseUrl
+    ?? configConnection
+    ?? throw new InvalidOperationException("DATABASE_URL environment variable not found. Please set it in Render environment variables.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
