@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ShiftSchedularApplication.Models;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ShiftSchedularApplication.Data
 {

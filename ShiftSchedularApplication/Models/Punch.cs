@@ -8,7 +8,7 @@ namespace ShiftSchedularApplication.Models
         public int Id { get; set; }
 
         [Required]
-        public string EmployeeId { get; set; }  // FK
+        public string EmployeeId { get; set; } = string.Empty;  // FK
 
         [Required]
         public DateTime PunchInTime { get; set; }

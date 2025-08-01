@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: shiftscheduler-application
+    env: dotnet
+    buildCommand: dotnet build --no-restore
+    startCommand: dotnet ShiftSchedularApplication.dll
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:$PORT 

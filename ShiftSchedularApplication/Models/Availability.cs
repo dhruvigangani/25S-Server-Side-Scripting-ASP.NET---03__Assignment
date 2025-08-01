@@ -10,7 +10,7 @@ namespace ShiftSchedularApplication.Models
         public int Id { get; set; }
 
         [Required]
-        public string EmployeeId { get; set; }  // FK to AspNetUsers.Id
+        public string EmployeeId { get; set; } = string.Empty;  // FK to AspNetUsers.Id
 
         [Required]
         public DayOfWeek Day { get; set; }

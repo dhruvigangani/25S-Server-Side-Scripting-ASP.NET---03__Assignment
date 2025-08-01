@@ -5,10 +5,11 @@ using ShiftSchedularApplication.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? Environment.GetEnvironmentVariable("DATABASE_URL")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -22,8 +23,8 @@ builder.Services.AddAuthentication()
     .AddGoogle(options =>
     {
         var googleAuth = builder.Configuration.GetSection("Authentication:Google");
-        options.ClientId = googleAuth["ClientId"];
-        options.ClientSecret = googleAuth["ClientSecret"];
+        options.ClientId = googleAuth["ClientId"] ?? string.Empty;
+        options.ClientSecret = googleAuth["ClientSecret"] ?? string.Empty;
     });
 
 builder.Services.AddControllersWithViews();
