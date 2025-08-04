@@ -76,6 +76,19 @@ if (!string.IsNullOrEmpty(clientId))
     });
 }
 
+// Only add Facebook authentication if AppId is provided
+var facebookAuth = builder.Configuration.GetSection("Authentication:Facebook");
+var facebookAppId = facebookAuth["AppId"];
+if (!string.IsNullOrEmpty(facebookAppId) && facebookAppId != "YOUR_FACEBOOK_APP_ID")
+{
+    authenticationBuilder.AddFacebook(options =>
+    {
+        options.AppId = facebookAppId;
+        options.AppSecret = facebookAuth["AppSecret"] ?? string.Empty;
+        options.CallbackPath = "/signin-facebook";
+    });
+}
+
 builder.Services.AddControllersWithViews();
 
 // Configure DataProtection for containerized environments
