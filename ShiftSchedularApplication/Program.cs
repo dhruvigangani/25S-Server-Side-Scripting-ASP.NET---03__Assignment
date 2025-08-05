@@ -134,11 +134,8 @@ else
     app.UseHsts();
 }
 
-// Only use HTTPS redirection in development
-if (app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
+// Configure HTTPS redirection
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();

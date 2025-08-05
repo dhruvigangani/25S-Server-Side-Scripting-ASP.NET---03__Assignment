@@ -83,12 +83,13 @@ namespace ShiftSchedularApplication.Areas.Identity.Pages.Account
             {
                 // If the user does not have an account, then ask the user to create an account.
                 ReturnUrl = returnUrl;
-                ProviderDisplayName = info.ProviderDisplayName;
+                ProviderDisplayName = info.ProviderDisplayName ?? string.Empty;
                 if (info.Principal.HasClaim(c => c.Type == System.Security.Claims.ClaimTypes.Email))
                 {
+                    var email = info.Principal.FindFirstValue(System.Security.Claims.ClaimTypes.Email);
                     Input = new InputModel
                     {
-                        Email = info.Principal.FindFirstValue(System.Security.Claims.ClaimTypes.Email) ?? string.Empty
+                        Email = email ?? string.Empty
                     };
                 }
                 return Page();
@@ -129,7 +130,7 @@ namespace ShiftSchedularApplication.Areas.Identity.Pages.Account
                 }
             }
 
-            ProviderDisplayName = info.ProviderDisplayName;
+            ProviderDisplayName = info.ProviderDisplayName ?? string.Empty;
             ReturnUrl = returnUrl;
             return Page();
         }
