@@ -49,7 +49,7 @@ if (!string.IsNullOrEmpty(databaseUrl) && databaseUrl.StartsWith("postgresql://"
 
 connectionString = connectionString
     ?? configConnection
-    ?? "Host=localhost;Database=shiftschedulerdb;Username=postgres;Password=password";
+    ?? "Data Source=app.db";
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
