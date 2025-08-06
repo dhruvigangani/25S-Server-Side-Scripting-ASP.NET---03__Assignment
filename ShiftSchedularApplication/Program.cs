@@ -52,7 +52,7 @@ connectionString = connectionString
     ?? "Host=localhost;Database=shiftschedulerdb;Username=postgres;Password=password";
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseSqlite(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
