@@ -30,12 +30,14 @@ namespace ShiftSchedularApplication.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "Email is required.")]
+            [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
+            [Display(Name = "Email")]
             public string Email { get; set; } = string.Empty;
 
-            [Required]
+            [Required(ErrorMessage = "Password is required.")]
             [DataType(DataType.Password)]
+            [Display(Name = "Password")]
             public string Password { get; set; } = string.Empty;
 
             [Display(Name = "Remember me?")]
@@ -61,38 +63,62 @@ namespace ShiftSchedularApplication.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
-
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
-            if (ModelState.IsValid)
+            try
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
+                returnUrl ??= Url.Content("~/");
+
+                ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+                // Log login attempt (without sensitive data)
+                _logger.LogInformation($"Login attempt for email: {Input?.Email ?? "null"}");
+
+                if (ModelState.IsValid)
                 {
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
+                    _logger.LogInformation($"Attempting login for user: {Input?.Email ?? "null"}");
+                    
+                    // Enable account lockout to prevent brute force attacks
+                    var result = await _signInManager.PasswordSignInAsync(Input?.Email ?? "", Input?.Password ?? "", Input?.RememberMe ?? false, lockoutOnFailure: true);
+                    
+                    _logger.LogInformation($"Login result: Succeeded={result.Succeeded}, RequiresTwoFactor={result.RequiresTwoFactor}, IsLockedOut={result.IsLockedOut}");
+                    
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation("User logged in successfully.");
+                        return LocalRedirect(returnUrl);
+                    }
+                    if (result.RequiresTwoFactor)
+                    {
+                        _logger.LogInformation("User requires two-factor authentication.");
+                        return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input?.RememberMe ?? false });
+                    }
+                    if (result.IsLockedOut)
+                    {
+                        _logger.LogWarning("User account locked out.");
+                        return RedirectToPage("./Lockout");
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Invalid login attempt.");
+                        ModelState.AddModelError(string.Empty, "Invalid email or password. Please try again.");
+                        return Page();
+                    }
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return Page();
+                    var errors = string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                    _logger.LogWarning($"Model state is invalid. Errors: {errors}");
+                    ModelState.AddModelError(string.Empty, $"Validation errors: {errors}");
                 }
-            }
 
-            // If we got this far, something failed, redisplay form
-            return Page();
+                // If we got this far, something failed, redisplay form
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Exception during login: {ex.Message}");
+                ModelState.AddModelError(string.Empty, "An error occurred during login. Please try again.");
+                return Page();
+            }
         }
     }
 } 

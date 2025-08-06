@@ -132,9 +132,14 @@ For detailed deployment instructions, see [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE
 
 - ASP.NET Core Identity for user management
 - Google OAuth integration
-- Secure password hashing
+- Secure password hashing with 8+ character requirements
+- Account lockout protection (5 failed attempts = 15 min lockout)
+- CSRF protection enabled
 - HTTPS enforcement in production
 - SQL injection protection via Entity Framework
+- Security headers (X-Frame-Options, X-XSS-Protection, etc.)
+- 4-hour session timeout with sliding expiration
+- Secure cookie configuration
 
 ## 🧪 Testing
 

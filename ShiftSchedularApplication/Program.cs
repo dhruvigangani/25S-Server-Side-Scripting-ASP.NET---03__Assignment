@@ -4,6 +4,7 @@ using ShiftSchedularApplication.Data;
 using System.Linq;
 using System.IO;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,9 +22,38 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = false; 
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8; // Increased from 6 to 8 for better security
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Lock account for 15 minutes
+    options.Lockout.MaxFailedAccessAttempts = 5; // Lock after 5 failed attempts
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+// Configure cookie settings for better OAuth support
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.ExpireTimeSpan = TimeSpan.FromHours(4); // Reduced from 12 to 4 hours for better security
+    options.SlidingExpiration = true;
+    options.LoginPath = "/Identity/Account/Login";
+    options.LogoutPath = "/Identity/Account/Logout";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+});
+
+// Configure external cookie for OAuth
+builder.Services.ConfigureExternalCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+});
 
 var authenticationBuilder = builder.Services.AddAuthentication();
 
@@ -36,6 +66,10 @@ if (!string.IsNullOrEmpty(clientId))
     {
         options.ClientId = clientId;
         options.ClientSecret = googleAuth["ClientSecret"] ?? string.Empty;
+        options.CallbackPath = "/signin-google";
+        options.SaveTokens = true;
+        options.CorrelationCookie.SameSite = SameSiteMode.Lax;
+        options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     });
 }
 
@@ -56,7 +90,8 @@ builder.Services.AddControllersWithViews();
 
 // Configure DataProtection for containerized environments
 // Use the default configuration which works well in containers
-builder.Services.AddDataProtection();
+builder.Services.AddDataProtection()
+    .SetApplicationName("ShiftSchedularApplication");
 
 var app = builder.Build();
 
@@ -97,9 +132,22 @@ else
     app.UseHsts();
 }
 
-// Configure HTTPS redirection
-app.UseHttpsRedirection();
+// Configure HTTPS redirection only in production
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseStaticFiles();
+
+// Add security headers
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    context.Response.Headers["X-Frame-Options"] = "DENY";
+    context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
+    context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    await next();
+});
 
 app.UseRouting();
 
@@ -127,7 +175,7 @@ static async Task SeedUsersAsync(UserManager<IdentityUser> userManager)
                 Email = "dario@gc.ca",
                 EmailConfirmed = true
             };
-            var result = await userManager.CreateAsync(newUser, "Test123$");
+            var result = await userManager.CreateAsync(newUser, "Test123$!");
             if (!result.Succeeded)
             {
                 Console.WriteLine($"Failed to create user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
@@ -139,7 +187,17 @@ static async Task SeedUsersAsync(UserManager<IdentityUser> userManager)
         }
         else
         {
-            Console.WriteLine("User 'dario@gc.ca' already exists!");
+            // Update existing user's password to meet new requirements
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            var resetResult = await userManager.ResetPasswordAsync(user, token, "Test123$!");
+            if (resetResult.Succeeded)
+            {
+                Console.WriteLine("User 'dario@gc.ca' password updated successfully!");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to update user password: {string.Join(", ", resetResult.Errors.Select(e => e.Description))}");
+            }
         }
     }
     catch (Exception ex)
