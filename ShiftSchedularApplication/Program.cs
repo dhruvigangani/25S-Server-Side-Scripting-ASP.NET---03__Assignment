@@ -7,49 +7,12 @@ using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 var configConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 
-Console.WriteLine($"DATABASE_URL: {(string.IsNullOrEmpty(databaseUrl) ? "NOT SET" : "SET")}");
 Console.WriteLine($"Config Connection: {(string.IsNullOrEmpty(configConnection) ? "NOT SET" : "SET")}");
 
-// Convert PostgreSQL URL to connection string if needed
-var connectionString = databaseUrl;
-if (!string.IsNullOrEmpty(databaseUrl) && databaseUrl.StartsWith("postgresql://"))
-{
-    try
-    {
-        // Parse the PostgreSQL URL format
-        var uri = new Uri(databaseUrl);
-        var userInfo = uri.UserInfo.Split(':');
-        var username = userInfo[0];
-        var password = userInfo.Length > 1 ? userInfo[1] : "";
-        var host = uri.Host;
-        var port = uri.Port > 0 ? uri.Port : 5432; // Default to 5432 if port is not specified
-        var database = uri.AbsolutePath.TrimStart('/');
-        
-        // Ensure database name is not empty
-        if (string.IsNullOrEmpty(database))
-        {
-            database = "shiftschedulerdb";
-        }
-        
-        connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true;";
-        
-        Console.WriteLine($"Converted PostgreSQL URL to connection string format");
-        Console.WriteLine($"Host: {host}, Port: {port}, Database: {database}");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error parsing DATABASE_URL: {ex.Message}");
-        Console.WriteLine($"DATABASE_URL value: {databaseUrl}");
-        throw;
-    }
-}
-
-connectionString = connectionString
-    ?? configConnection
-    ?? "Data Source=app.db";
+// Use SQLite connection string
+var connectionString = configConnection ?? "Data Source=app.db";
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
