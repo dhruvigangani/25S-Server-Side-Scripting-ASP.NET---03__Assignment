@@ -54,6 +54,16 @@ namespace ShiftSchedularApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Set the EmployeeId to the current user's ID
+                availability.EmployeeId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                
+                if (string.IsNullOrEmpty(availability.EmployeeId))
+                {
+                    ModelState.AddModelError("", "User not found. Please log in again.");
+                    ViewData["Day"] = new SelectList(System.Enum.GetValues(typeof(System.DayOfWeek)), availability.Day);
+                    return View(availability);
+                }
+                
                 _context.Add(availability);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

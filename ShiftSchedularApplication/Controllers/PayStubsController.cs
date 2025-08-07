@@ -50,6 +50,15 @@ namespace ShiftSchedularApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Set the EmployeeId to the current user's ID
+                payStub.EmployeeId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                
+                if (string.IsNullOrEmpty(payStub.EmployeeId))
+                {
+                    ModelState.AddModelError("", "User not found. Please log in again.");
+                    return View(payStub);
+                }
+                
                 _context.Add(payStub);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

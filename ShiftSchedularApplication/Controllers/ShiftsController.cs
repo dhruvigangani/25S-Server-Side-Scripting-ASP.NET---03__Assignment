@@ -63,6 +63,15 @@ namespace ShiftSchedularApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Set the EmployeeId to the current user's ID
+                shift.EmployeeId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                
+                if (string.IsNullOrEmpty(shift.EmployeeId))
+                {
+                    ModelState.AddModelError("", "User not found. Please log in again.");
+                    return View(shift);
+                }
+                
                 _context.Add(shift);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
