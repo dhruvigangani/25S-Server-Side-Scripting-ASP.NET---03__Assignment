@@ -90,6 +90,14 @@ namespace ShiftSchedularApplication.Controllers
             {
                 return NotFound();
             }
+
+            // Ensure user can only edit their own records
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId) || punch.EmployeeId != currentUserId)
+            {
+                return Forbid();
+            }
+
             return View(punch);
         }
 
@@ -101,6 +109,13 @@ namespace ShiftSchedularApplication.Controllers
             if (id != punch.Id)
             {
                 return NotFound();
+            }
+
+            // Ensure user can only edit their own records
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId) || punch.EmployeeId != currentUserId)
+            {
+                return Forbid();
             }
 
             if (ModelState.IsValid)
@@ -141,6 +156,13 @@ namespace ShiftSchedularApplication.Controllers
                 return NotFound();
             }
 
+            // Ensure user can only delete their own records
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId) || punch.EmployeeId != currentUserId)
+            {
+                return Forbid();
+            }
+
             return View(punch);
         }
 
@@ -152,6 +174,13 @@ namespace ShiftSchedularApplication.Controllers
             var punch = await _context.Punches.FindAsync(id);
             if (punch != null)
             {
+                // Ensure user can only delete their own records
+                var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId) || punch.EmployeeId != currentUserId)
+                {
+                    return Forbid();
+                }
+
                 _context.Punches.Remove(punch);
             }
 

@@ -92,6 +92,14 @@ namespace ShiftSchedularApplication.Controllers
             {
                 return NotFound();
             }
+
+            // Ensure user can only edit their own records
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId) || shift.EmployeeId != currentUserId)
+            {
+                return Forbid();
+            }
+
             return View(shift);
         }
 
@@ -105,6 +113,13 @@ namespace ShiftSchedularApplication.Controllers
             if (id != shift.Id)
             {
                 return NotFound();
+            }
+
+            // Ensure user can only edit their own records
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId) || shift.EmployeeId != currentUserId)
+            {
+                return Forbid();
             }
 
             if (ModelState.IsValid)
@@ -145,6 +160,13 @@ namespace ShiftSchedularApplication.Controllers
                 return NotFound();
             }
 
+            // Ensure user can only delete their own records
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId) || shift.EmployeeId != currentUserId)
+            {
+                return Forbid();
+            }
+
             return View(shift);
         }
 
@@ -156,6 +178,13 @@ namespace ShiftSchedularApplication.Controllers
             var shift = await _context.Shifts.FindAsync(id);
             if (shift != null)
             {
+                // Ensure user can only delete their own records
+                var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId) || shift.EmployeeId != currentUserId)
+                {
+                    return Forbid();
+                }
+
                 _context.Shifts.Remove(shift);
             }
 

@@ -74,6 +74,13 @@ namespace ShiftSchedularApplication.Controllers
             var payStub = await _context.PayStubs.FindAsync(id);
             if (payStub == null) return NotFound();
 
+            // Ensure user can only edit their own records
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId) || payStub.EmployeeId != currentUserId)
+            {
+                return Forbid();
+            }
+
             return View(payStub);
         }
 
@@ -83,6 +90,13 @@ namespace ShiftSchedularApplication.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeId,HoursWorked,HourlyRate,PayDate")] PayStub payStub)
         {
             if (id != payStub.Id) return NotFound();
+
+            // Ensure user can only edit their own records
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId) || payStub.EmployeeId != currentUserId)
+            {
+                return Forbid();
+            }
 
             if (ModelState.IsValid)
             {
@@ -110,6 +124,13 @@ namespace ShiftSchedularApplication.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (payStub == null) return NotFound();
 
+            // Ensure user can only delete their own records
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId) || payStub.EmployeeId != currentUserId)
+            {
+                return Forbid();
+            }
+
             return View(payStub);
         }
 
@@ -121,6 +142,13 @@ namespace ShiftSchedularApplication.Controllers
             var payStub = await _context.PayStubs.FindAsync(id);
             if (payStub != null)
             {
+                // Ensure user can only delete their own records
+                var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId) || payStub.EmployeeId != currentUserId)
+                {
+                    return Forbid();
+                }
+
                 _context.PayStubs.Remove(payStub);
                 await _context.SaveChangesAsync();
             }

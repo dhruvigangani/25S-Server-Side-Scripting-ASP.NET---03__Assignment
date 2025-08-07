@@ -80,6 +80,13 @@ namespace ShiftSchedularApplication.Controllers
             var availability = await _context.Availabilities.FindAsync(id);
             if (availability == null) return NotFound();
 
+            // Ensure user can only edit their own records
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId) || availability.EmployeeId != currentUserId)
+            {
+                return Forbid();
+            }
+
             ViewData["Day"] = new SelectList(System.Enum.GetValues(typeof(System.DayOfWeek)), availability.Day);
             return View(availability);
         }
@@ -90,6 +97,13 @@ namespace ShiftSchedularApplication.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeId,Day,StartAvailability,EndAvailability")] Availability availability)
         {
             if (id != availability.Id) return NotFound();
+
+            // Ensure user can only edit their own records
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId) || availability.EmployeeId != currentUserId)
+            {
+                return Forbid();
+            }
 
             if (ModelState.IsValid)
             {
@@ -117,6 +131,13 @@ namespace ShiftSchedularApplication.Controllers
             var availability = await _context.Availabilities.FirstOrDefaultAsync(m => m.Id == id);
             if (availability == null) return NotFound();
 
+            // Ensure user can only delete their own records
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId) || availability.EmployeeId != currentUserId)
+            {
+                return Forbid();
+            }
+
             return View(availability);
         }
 
@@ -128,6 +149,13 @@ namespace ShiftSchedularApplication.Controllers
             var availability = await _context.Availabilities.FindAsync(id);
             if (availability != null)
             {
+                // Ensure user can only delete their own records
+                var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId) || availability.EmployeeId != currentUserId)
+                {
+                    return Forbid();
+                }
+
                 _context.Availabilities.Remove(availability);
                 await _context.SaveChangesAsync();
             }
