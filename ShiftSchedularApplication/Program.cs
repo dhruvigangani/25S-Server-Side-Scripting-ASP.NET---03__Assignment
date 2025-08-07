@@ -77,8 +77,10 @@ var authenticationBuilder = builder.Services.AddAuthentication();
 // Only add Google authentication if ClientId is provided
 var googleAuth = builder.Configuration.GetSection("Authentication:Google");
 var clientId = googleAuth["ClientId"];
+Console.WriteLine($"Google ClientId: {(string.IsNullOrEmpty(clientId) ? "NOT SET" : "SET")}");
 if (!string.IsNullOrEmpty(clientId))
 {
+    Console.WriteLine("Adding Google authentication");
     authenticationBuilder.AddGoogle(options =>
     {
         options.ClientId = clientId;
@@ -88,6 +90,10 @@ if (!string.IsNullOrEmpty(clientId))
         options.CorrelationCookie.SameSite = SameSiteMode.Lax;
         options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     });
+}
+else
+{
+    Console.WriteLine("Google authentication not configured");
 }
 
 // Only add Facebook authentication if AppId is provided
