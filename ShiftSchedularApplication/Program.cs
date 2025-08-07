@@ -56,8 +56,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Force secure cookies in production
-    options.ExpireTimeSpan = TimeSpan.FromHours(4); // Reduced from 12 to 4 hours for better security
+    options.Cookie.SecurePolicy = builder.Environment.IsProduction() ? CookieSecurePolicy.Always : CookieSecurePolicy.SameAsRequest;
+    options.ExpireTimeSpan = TimeSpan.FromHours(4);
     options.SlidingExpiration = true;
     options.LoginPath = "/Identity/Account/Login";
     options.LogoutPath = "/Identity/Account/Logout";
@@ -69,7 +69,7 @@ builder.Services.ConfigureExternalCookie(options =>
 {
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Force secure cookies for OAuth
+    options.Cookie.SecurePolicy = builder.Environment.IsProduction() ? CookieSecurePolicy.Always : CookieSecurePolicy.SameAsRequest;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 });
 
@@ -88,7 +88,7 @@ if (!string.IsNullOrEmpty(googleClientId))
         options.CallbackPath = "/signin-google";
         options.SaveTokens = true;
         options.CorrelationCookie.SameSite = SameSiteMode.Lax;
-        options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.CorrelationCookie.SecurePolicy = builder.Environment.IsProduction() ? CookieSecurePolicy.Always : CookieSecurePolicy.SameAsRequest;
         options.CorrelationCookie.HttpOnly = true;
         options.CorrelationCookie.MaxAge = TimeSpan.FromMinutes(5);
     });
@@ -108,7 +108,7 @@ if (!string.IsNullOrEmpty(facebookAppId) && facebookAppId != "YOUR_FACEBOOK_APP_
         options.AppSecret = Environment.GetEnvironmentVariable("FACEBOOK_APP_SECRET") ?? builder.Configuration["Authentication:Facebook:AppSecret"] ?? string.Empty;
         options.CallbackPath = "/signin-facebook";
         options.CorrelationCookie.SameSite = SameSiteMode.Lax;
-        options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.CorrelationCookie.SecurePolicy = builder.Environment.IsProduction() ? CookieSecurePolicy.Always : CookieSecurePolicy.SameAsRequest;
         options.CorrelationCookie.HttpOnly = true;
         options.CorrelationCookie.MaxAge = TimeSpan.FromMinutes(5);
     });
@@ -117,11 +117,48 @@ if (!string.IsNullOrEmpty(facebookAppId) && facebookAppId != "YOUR_FACEBOOK_APP_
 builder.Services.AddControllersWithViews();
 
 // Configure DataProtection for containerized environments
-// Use the default configuration which works well in containers
-builder.Services.AddDataProtection()
+var dataProtectionBuilder = builder.Services.AddDataProtection()
     .SetApplicationName("ShiftSchedularApplication");
 
+// Configure data protection based on environment
+if (builder.Environment.IsProduction())
+{
+    // In production, use file system for key persistence
+    var keysDirectory = new DirectoryInfo("/tmp/keys");
+    if (!keysDirectory.Exists)
+    {
+        keysDirectory.Create();
+    }
+    dataProtectionBuilder.PersistKeysToFileSystem(keysDirectory);
+}
+else
+{
+    // In development, use default configuration
+    dataProtectionBuilder.PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "keys")));
+}
+
+dataProtectionBuilder.SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+
 var app = builder.Build();
+
+// Ensure data protection keys directory exists
+if (app.Environment.IsProduction())
+{
+    try
+    {
+        var keysDirectory = new DirectoryInfo("/tmp/keys");
+        if (!keysDirectory.Exists)
+        {
+            keysDirectory.Create();
+            Console.WriteLine("Created data protection keys directory: /tmp/keys");
+        }
+        Console.WriteLine($"Data protection keys directory exists: {keysDirectory.Exists}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Warning: Could not create data protection keys directory: {ex.Message}");
+    }
+}
 
 // Ensure database is created and migrations are applied
 using (var scope = app.Services.CreateScope())
@@ -231,6 +268,17 @@ app.Use(async (context, next) =>
         // Redirect to login page with error message
         context.Response.Redirect("/Identity/Account/Login?error=oauth_state_invalid");
         return;
+    }
+    catch (Exception ex)
+    {
+        // Log OAuth errors
+        if (context.Request.Path.StartsWithSegments("/signin-google") || context.Request.Path.StartsWithSegments("/signin-facebook"))
+        {
+            Console.WriteLine($"OAuth error: {ex.Message}");
+            context.Response.Redirect("/Identity/Account/Login?error=oauth_failed");
+            return;
+        }
+        throw;
     }
 });
 
