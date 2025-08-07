@@ -140,6 +140,21 @@ if (!string.IsNullOrEmpty(facebookAppId) && facebookAppId != "YOUR_FACEBOOK_APP_
 
 builder.Services.AddControllersWithViews();
 
+// Configure URL generation to use HTTPS in production
+if (builder.Environment.IsProduction())
+{
+    builder.Services.Configure<Microsoft.AspNetCore.Routing.RouteOptions>(options =>
+    {
+        options.LowercaseUrls = true;
+    });
+    
+    // Configure URL generation
+    builder.Services.Configure<Microsoft.AspNetCore.Http.HttpContextOptions>(options =>
+    {
+        options.UseHttpsRedirection = true;
+    });
+}
+
 // Configure DataProtection for containerized environments
 var dataProtectionBuilder = builder.Services.AddDataProtection()
     .SetApplicationName("ShiftSchedularApplication");
@@ -289,9 +304,13 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
     
-    // Force HTTPS for OAuth providers
+    // Force HTTPS for OAuth providers and ensure proper URL generation
     app.Use(async (context, next) =>
     {
+        // Set the scheme to HTTPS for OAuth callbacks
+        context.Request.Scheme = "https";
+        context.Request.Host = new Microsoft.AspNetCore.Http.HostString(context.Request.Host.Host, context.Request.Host.Port);
+        
         if (!context.Request.IsHttps && !context.Request.Headers["X-Forwarded-Proto"].Contains("https"))
         {
             var httpsUrl = $"https://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}";
