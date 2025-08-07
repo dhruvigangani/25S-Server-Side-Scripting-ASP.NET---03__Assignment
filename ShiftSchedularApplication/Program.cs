@@ -5,6 +5,7 @@ using System.Linq;
 using System.IO;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -75,20 +76,21 @@ builder.Services.ConfigureExternalCookie(options =>
 var authenticationBuilder = builder.Services.AddAuthentication();
 
 // Only add Google authentication if ClientId is provided
-var googleAuth = builder.Configuration.GetSection("Authentication:Google");
-var clientId = googleAuth["ClientId"];
-Console.WriteLine($"Google ClientId: {(string.IsNullOrEmpty(clientId) ? "NOT SET" : "SET")}");
-if (!string.IsNullOrEmpty(clientId))
+var googleClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID") ?? builder.Configuration["Authentication:Google:ClientId"];
+Console.WriteLine($"Google ClientId: {(string.IsNullOrEmpty(googleClientId) ? "NOT SET" : "SET")}");
+if (!string.IsNullOrEmpty(googleClientId))
 {
     Console.WriteLine("Adding Google authentication");
     authenticationBuilder.AddGoogle(options =>
     {
-        options.ClientId = clientId;
-        options.ClientSecret = googleAuth["ClientSecret"] ?? string.Empty;
+        options.ClientId = googleClientId;
+        options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET") ?? builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
         options.CallbackPath = "/signin-google";
         options.SaveTokens = true;
         options.CorrelationCookie.SameSite = SameSiteMode.Lax;
-        options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.CorrelationCookie.HttpOnly = true;
+        options.CorrelationCookie.MaxAge = TimeSpan.FromMinutes(5);
     });
 }
 else
@@ -97,15 +99,18 @@ else
 }
 
 // Only add Facebook authentication if AppId is provided
-var facebookAuth = builder.Configuration.GetSection("Authentication:Facebook");
-var facebookAppId = facebookAuth["AppId"];
+var facebookAppId = Environment.GetEnvironmentVariable("FACEBOOK_APP_ID") ?? builder.Configuration["Authentication:Facebook:AppId"];
 if (!string.IsNullOrEmpty(facebookAppId) && facebookAppId != "YOUR_FACEBOOK_APP_ID")
 {
     authenticationBuilder.AddFacebook(options =>
     {
         options.AppId = facebookAppId;
-        options.AppSecret = facebookAuth["AppSecret"] ?? string.Empty;
+        options.AppSecret = Environment.GetEnvironmentVariable("FACEBOOK_APP_SECRET") ?? builder.Configuration["Authentication:Facebook:AppSecret"] ?? string.Empty;
         options.CallbackPath = "/signin-facebook";
+        options.CorrelationCookie.SameSite = SameSiteMode.Lax;
+        options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.CorrelationCookie.HttpOnly = true;
+        options.CorrelationCookie.MaxAge = TimeSpan.FromMinutes(5);
     });
 }
 
@@ -213,6 +218,21 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Add OAuth error handling middleware
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (AuthenticationFailureException ex) when (ex.Message.Contains("oauth state"))
+    {
+        // Redirect to login page with error message
+        context.Response.Redirect("/Identity/Account/Login?error=oauth_state_invalid");
+        return;
+    }
+});
 
 app.MapControllerRoute(
     name: "default",
