@@ -48,10 +48,18 @@ namespace ShiftSchedularApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,EmployeeId,HoursWorked,HourlyRate,PayDate")] PayStub payStub)
         {
+            // Debug: Log the incoming data
+            Console.WriteLine($"Create PayStub called - ModelState.IsValid: {ModelState.IsValid}");
+            Console.WriteLine($"HoursWorked: {payStub.HoursWorked}");
+            Console.WriteLine($"HourlyRate: {payStub.HourlyRate}");
+            Console.WriteLine($"PayDate: {payStub.PayDate}");
+            
             if (ModelState.IsValid)
             {
                 // Set the EmployeeId to the current user's ID
                 payStub.EmployeeId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                
+                Console.WriteLine($"EmployeeId set to: {payStub.EmployeeId}");
                 
                 if (string.IsNullOrEmpty(payStub.EmployeeId))
                 {
@@ -61,7 +69,16 @@ namespace ShiftSchedularApplication.Controllers
                 
                 _context.Add(payStub);
                 await _context.SaveChangesAsync();
+                Console.WriteLine("PayStub created successfully!");
                 return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                // Debug: Log validation errors
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine($"Validation Error: {error.ErrorMessage}");
+                }
             }
             return View(payStub);
         }

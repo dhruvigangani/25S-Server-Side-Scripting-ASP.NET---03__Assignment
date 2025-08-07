@@ -13,20 +13,20 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <!-- EmployeeId will be set automatically to current user -->
-            <input type="hidden" asp-for="EmployeeId" value="" />
+            <input type="hidden" asp-for="EmployeeId" />
             <div class="form-group">
                 <label asp-for="HoursWorked" class="control-label"></label>
-                <input asp-for="HoursWorked" class="form-control" type="number" step="0.01" min="0" />
+                <input asp-for="HoursWorked" class="form-control" type="text" required />
                 <span asp-validation-for="HoursWorked" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="HourlyRate" class="control-label"></label>
-                <input asp-for="HourlyRate" class="form-control" type="number" step="0.01" min="0" />
+                <input asp-for="HourlyRate" class="form-control" type="text" required />
                 <span asp-validation-for="HourlyRate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="PayDate" class="control-label"></label>
-                <input asp-for="PayDate" class="form-control" type="date" />
+                <input asp-for="PayDate" class="form-control" type="text" required />
                 <span asp-validation-for="PayDate" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -42,4 +42,15 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            $('form').on('submit', function(e) {
+                console.log('Form submitted!');
+                console.log('HoursWorked:', $('#HoursWorked').val());
+                console.log('HourlyRate:', $('#HourlyRate').val());
+                console.log('PayDate:', $('#PayDate').val());
+            });
+        });
+    </script>
 }
