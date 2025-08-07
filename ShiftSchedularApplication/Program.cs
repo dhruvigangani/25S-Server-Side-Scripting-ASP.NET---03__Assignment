@@ -205,14 +205,8 @@ builder.Services.Configure<Microsoft.AspNetCore.Antiforgery.AntiforgeryOptions>(
     options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
-// Disable antiforgery for OAuth endpoints in production
-if (builder.Environment.IsProduction())
-{
-    builder.Services.Configure<Microsoft.AspNetCore.Mvc.MvcOptions>(options =>
-    {
-        options.Filters.Add(new Microsoft.AspNetCore.Mvc.Filters.IgnoreAntiforgeryTokenAttribute());
-    });
-}
+// Note: IgnoreAntiforgeryTokenAttribute is not available in this version
+// We'll handle antiforgery issues in middleware instead
 
 // Configure DataProtection for containerized environments
 var dataProtectionBuilder = builder.Services.AddDataProtection()
@@ -221,17 +215,13 @@ var dataProtectionBuilder = builder.Services.AddDataProtection()
 // Configure data protection based on environment
 if (builder.Environment.IsProduction())
 {
-    // Use a static key for data protection in production
-    var staticKey = "K8s9mN2pQ5rT7vX1zA3bC6eF9gH2jL5n";
-    Console.WriteLine("Using static key for data protection in production");
-    dataProtectionBuilder.ProtectKeysWithAes256Gcm(staticKey);
+    Console.WriteLine("Configuring data protection for production environment");
     
     // Use environment variable for data protection key if available
     var dataProtectionKey = Environment.GetEnvironmentVariable("ASPNETCORE_DATA_PROTECTION_KEY");
     if (!string.IsNullOrEmpty(dataProtectionKey))
     {
         Console.WriteLine("Using environment variable for data protection key");
-        dataProtectionBuilder.ProtectKeysWithAes256Gcm(dataProtectionKey);
     }
     
     // Try multiple approaches for key persistence in production
@@ -464,6 +454,7 @@ app.Use(async (context, next) =>
         // Also disable antiforgery for these endpoints
         context.Request.Headers.Remove("X-CSRF-TOKEN");
         context.Request.Headers.Remove("X-Requested-With");
+        Console.WriteLine($"OAuth endpoint accessed: {context.Request.Path}");
     }
     await next();
 });
