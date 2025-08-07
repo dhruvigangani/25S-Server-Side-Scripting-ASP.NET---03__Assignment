@@ -132,12 +132,18 @@ using (var scope = app.Services.CreateScope())
         if (isProduction && !string.IsNullOrEmpty(configConnection))
         {
             // PostgreSQL specific initialization
+            Console.WriteLine("Initializing PostgreSQL database...");
             await context.Database.EnsureCreatedAsync();
             Console.WriteLine("PostgreSQL database initialized successfully!");
+            
+            // Verify tables were created
+            var tables = await context.Database.SqlQueryRaw<string>("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'").ToListAsync();
+            Console.WriteLine($"Tables created: {string.Join(", ", tables)}");
         }
         else
         {
             // SQLite initialization
+            Console.WriteLine("Initializing SQLite database...");
             await context.Database.EnsureCreatedAsync();
             Console.WriteLine("SQLite database created successfully!");
         }
@@ -150,6 +156,13 @@ using (var scope = app.Services.CreateScope())
     {
         Console.WriteLine($"Error during database initialization: {ex.Message}");
         Console.WriteLine($"Stack trace: {ex.StackTrace}");
+        
+        // Log specific database errors
+        if (ex.InnerException != null)
+        {
+            Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+        }
+        
         // Don't throw - database initialization failure shouldn't stop the app
         // The app can still run without the database being fully initialized
     }
