@@ -5,6 +5,7 @@ using System.Linq;
 using System.IO;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,11 +13,27 @@ var configConnection = builder.Configuration.GetConnectionString("DefaultConnect
 
 Console.WriteLine($"Config Connection: {(string.IsNullOrEmpty(configConnection) ? "NOT SET" : "SET")}");
 
-// Use SQLite connection string
+// Determine which database to use based on environment
+var isProduction = builder.Environment.IsProduction();
 var connectionString = configConnection ?? "Data Source=app.db";
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+Console.WriteLine($"Environment: {(isProduction ? "Production" : "Development")}");
+Console.WriteLine($"Connection string provided: {!string.IsNullOrEmpty(configConnection)}");
+
+if (isProduction && !string.IsNullOrEmpty(configConnection))
+{
+    // Use PostgreSQL in production
+    Console.WriteLine("Using PostgreSQL database");
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(connectionString));
+}
+else
+{
+    // Use SQLite in development
+    Console.WriteLine("Using SQLite database");
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite(connectionString));
+}
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -104,8 +121,20 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<ApplicationDbContext>();
         
         Console.WriteLine("Attempting to create database...");
-        await context.Database.EnsureCreatedAsync();
-        Console.WriteLine("Database created successfully!");
+        
+        // For PostgreSQL, we need to ensure the database exists
+        if (isProduction && !string.IsNullOrEmpty(configConnection))
+        {
+            // PostgreSQL specific initialization
+            await context.Database.EnsureCreatedAsync();
+            Console.WriteLine("PostgreSQL database initialized successfully!");
+        }
+        else
+        {
+            // SQLite initialization
+            await context.Database.EnsureCreatedAsync();
+            Console.WriteLine("SQLite database created successfully!");
+        }
         
         var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
         await SeedUsersAsync(userManager);
