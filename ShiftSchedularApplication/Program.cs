@@ -55,7 +55,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Force secure cookies in production
     options.ExpireTimeSpan = TimeSpan.FromHours(4); // Reduced from 12 to 4 hours for better security
     options.SlidingExpiration = true;
     options.LoginPath = "/Identity/Account/Login";
@@ -68,7 +68,7 @@ builder.Services.ConfigureExternalCookie(options =>
 {
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Force secure cookies for OAuth
     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 });
 
@@ -180,10 +180,22 @@ else
     app.UseHsts();
 }
 
-// Configure HTTPS redirection only in production
+// Configure HTTPS redirection and security
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
+    
+    // Force HTTPS for OAuth providers
+    app.Use(async (context, next) =>
+    {
+        if (!context.Request.IsHttps && !context.Request.Headers["X-Forwarded-Proto"].Contains("https"))
+        {
+            var httpsUrl = $"https://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}";
+            context.Response.Redirect(httpsUrl, permanent: true);
+            return;
+        }
+        await next();
+    });
 }
 app.UseStaticFiles();
 
