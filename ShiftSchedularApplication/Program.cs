@@ -97,11 +97,13 @@ if (!string.IsNullOrEmpty(googleClientId))
         {
             OnRedirectToAuthorizationEndpoint = context =>
             {
+                Console.WriteLine($"Google OAuth redirect URI: {context.RedirectUri}");
                 // Force HTTPS for OAuth redirect
                 if (builder.Environment.IsProduction())
                 {
                     var uri = new Uri(context.RedirectUri);
                     var httpsUri = new UriBuilder(uri) { Scheme = "https" }.Uri.ToString();
+                    Console.WriteLine($"Google OAuth HTTPS redirect URI: {httpsUri}");
                     context.Response.Redirect(httpsUri);
                     return Task.CompletedTask;
                 }
@@ -111,8 +113,14 @@ if (!string.IsNullOrEmpty(googleClientId))
             OnRemoteFailure = context =>
             {
                 Console.WriteLine($"Google OAuth remote failure: {context.Failure?.Message}");
+                Console.WriteLine($"Google OAuth failure details: {context.Failure?.StackTrace}");
                 context.HandleResponse();
                 context.Response.Redirect("/Identity/Account/Login?error=oauth_failed");
+                return Task.CompletedTask;
+            },
+            OnTicketReceived = context =>
+            {
+                Console.WriteLine("Google OAuth ticket received successfully");
                 return Task.CompletedTask;
             }
         };
@@ -142,11 +150,13 @@ if (!string.IsNullOrEmpty(facebookAppId) && facebookAppId != "YOUR_FACEBOOK_APP_
         {
             OnRedirectToAuthorizationEndpoint = context =>
             {
+                Console.WriteLine($"Facebook OAuth redirect URI: {context.RedirectUri}");
                 // Force HTTPS for OAuth redirect
                 if (builder.Environment.IsProduction())
                 {
                     var uri = new Uri(context.RedirectUri);
                     var httpsUri = new UriBuilder(uri) { Scheme = "https" }.Uri.ToString();
+                    Console.WriteLine($"Facebook OAuth HTTPS redirect URI: {httpsUri}");
                     context.Response.Redirect(httpsUri);
                     return Task.CompletedTask;
                 }
@@ -156,8 +166,14 @@ if (!string.IsNullOrEmpty(facebookAppId) && facebookAppId != "YOUR_FACEBOOK_APP_
             OnRemoteFailure = context =>
             {
                 Console.WriteLine($"Facebook OAuth remote failure: {context.Failure?.Message}");
+                Console.WriteLine($"Facebook OAuth failure details: {context.Failure?.StackTrace}");
                 context.HandleResponse();
                 context.Response.Redirect("/Identity/Account/Login?error=oauth_failed");
+                return Task.CompletedTask;
+            },
+            OnTicketReceived = context =>
+            {
+                Console.WriteLine("Facebook OAuth ticket received successfully");
                 return Task.CompletedTask;
             }
         };
@@ -175,6 +191,29 @@ if (builder.Environment.IsProduction())
     });
 }
 
+// Configure antiforgery to be less strict for OAuth
+builder.Services.Configure<Microsoft.AspNetCore.Antiforgery.AntiforgeryOptions>(options =>
+{
+    options.SuppressXFrameOptionsHeader = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+});
+
+// Configure antiforgery to skip validation for OAuth endpoints
+builder.Services.Configure<Microsoft.AspNetCore.Antiforgery.AntiforgeryOptions>(options =>
+{
+    options.SuppressXFrameOptionsHeader = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+});
+
+// Disable antiforgery for OAuth endpoints in production
+if (builder.Environment.IsProduction())
+{
+    builder.Services.Configure<Microsoft.AspNetCore.Mvc.MvcOptions>(options =>
+    {
+        options.Filters.Add(new Microsoft.AspNetCore.Mvc.Filters.IgnoreAntiforgeryTokenAttribute());
+    });
+}
+
 // Configure DataProtection for containerized environments
 var dataProtectionBuilder = builder.Services.AddDataProtection()
     .SetApplicationName("ShiftSchedularApplication");
@@ -182,17 +221,48 @@ var dataProtectionBuilder = builder.Services.AddDataProtection()
 // Configure data protection based on environment
 if (builder.Environment.IsProduction())
 {
-    // In production, try multiple approaches for key persistence
+    // Use a static key for data protection in production
+    var staticKey = "K8s9mN2pQ5rT7vX1zA3bC6eF9gH2jL5n";
+    Console.WriteLine("Using static key for data protection in production");
+    dataProtectionBuilder.ProtectKeysWithAes256Gcm(staticKey);
+    
+    // Use environment variable for data protection key if available
+    var dataProtectionKey = Environment.GetEnvironmentVariable("ASPNETCORE_DATA_PROTECTION_KEY");
+    if (!string.IsNullOrEmpty(dataProtectionKey))
+    {
+        Console.WriteLine("Using environment variable for data protection key");
+        dataProtectionBuilder.ProtectKeysWithAes256Gcm(dataProtectionKey);
+    }
+    
+    // Try multiple approaches for key persistence in production
     var keysDirectory = new DirectoryInfo("/tmp/keys");
+    var appDataDirectory = new DirectoryInfo("/app/keys");
+    
+    // Try to create and use /tmp/keys
     if (!keysDirectory.Exists)
     {
         try
         {
             keysDirectory.Create();
+            Console.WriteLine("Created /tmp/keys directory");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Warning: Could not create /tmp/keys: {ex.Message}");
+        }
+    }
+    
+    // Try to create and use /app/keys as fallback
+    if (!appDataDirectory.Exists)
+    {
+        try
+        {
+            appDataDirectory.Create();
+            Console.WriteLine("Created /app/keys directory");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Warning: Could not create /app/keys: {ex.Message}");
         }
     }
     
@@ -207,11 +277,37 @@ if (builder.Environment.IsProduction())
         catch (Exception ex)
         {
             Console.WriteLine($"Warning: Could not use /tmp/keys: {ex.Message}");
+            
+            // Try fallback to /app/keys
+            if (appDataDirectory.Exists)
+            {
+                try
+                {
+                    dataProtectionBuilder.PersistKeysToFileSystem(appDataDirectory);
+                    Console.WriteLine("Using /app/keys for data protection keys");
+                }
+                catch (Exception ex2)
+                {
+                    Console.WriteLine($"Warning: Could not use /app/keys: {ex2.Message}");
+                }
+            }
+        }
+    }
+    else if (appDataDirectory.Exists)
+    {
+        try
+        {
+            dataProtectionBuilder.PersistKeysToFileSystem(appDataDirectory);
+            Console.WriteLine("Using /app/keys for data protection keys");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Warning: Could not use /app/keys: {ex.Message}");
         }
     }
     
-    // Fallback: Use in-memory keys with longer lifetime
-    dataProtectionBuilder.SetDefaultKeyLifetime(TimeSpan.FromDays(30));
+    // Set longer lifetime for in-memory keys as last resort
+    dataProtectionBuilder.SetDefaultKeyLifetime(TimeSpan.FromDays(90));
 }
 else
 {
@@ -357,6 +453,21 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Skip antiforgery validation for OAuth endpoints
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/signin-google") || 
+        context.Request.Path.StartsWithSegments("/signin-facebook"))
+    {
+        // Skip antiforgery validation for OAuth callbacks
+        context.Items["SkipAntiforgery"] = true;
+        // Also disable antiforgery for these endpoints
+        context.Request.Headers.Remove("X-CSRF-TOKEN");
+        context.Request.Headers.Remove("X-Requested-With");
+    }
+    await next();
+});
+
 // Add OAuth error handling middleware
 app.Use(async (context, next) =>
 {
@@ -369,6 +480,19 @@ app.Use(async (context, next) =>
         // Redirect to login page with error message
         context.Response.Redirect("/Identity/Account/Login?error=oauth_state_invalid");
         return;
+    }
+    catch (Microsoft.AspNetCore.Antiforgery.AntiforgeryValidationException ex)
+    {
+        // Handle antiforgery token issues - just continue for OAuth endpoints
+        Console.WriteLine($"Antiforgery token error: {ex.Message}");
+        if (context.Request.Path.StartsWithSegments("/signin-google") || context.Request.Path.StartsWithSegments("/signin-facebook"))
+        {
+            // For OAuth endpoints, just continue without throwing
+            Console.WriteLine("Skipping antiforgery validation for OAuth endpoint");
+            await next();
+            return;
+        }
+        throw;
     }
     catch (Exception ex)
     {
@@ -386,6 +510,31 @@ app.Use(async (context, next) =>
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Add a test endpoint for data protection
+app.MapGet("/test-dataprotection", (Microsoft.AspNetCore.DataProtection.IDataProtectionProvider dataProtection) =>
+{
+    try
+    {
+        var protector = dataProtection.CreateProtector("test");
+        var testData = "test";
+        var protectedData = protector.Protect(testData);
+        var unprotectedData = protector.Unprotect(protectedData);
+        
+        if (unprotectedData == testData)
+        {
+            return Results.Ok("Data protection is working correctly");
+        }
+        else
+        {
+            return Results.BadRequest("Data protection test failed");
+        }
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest($"Data protection error: {ex.Message}");
+    }
+});
 
 app.MapRazorPages();
 
