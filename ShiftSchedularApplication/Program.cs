@@ -91,6 +91,18 @@ if (!string.IsNullOrEmpty(googleClientId))
         options.CorrelationCookie.SecurePolicy = builder.Environment.IsProduction() ? CookieSecurePolicy.Always : CookieSecurePolicy.SameAsRequest;
         options.CorrelationCookie.HttpOnly = true;
         options.CorrelationCookie.MaxAge = TimeSpan.FromMinutes(5);
+        
+        // Configure events to handle data protection issues
+        options.Events = new Microsoft.AspNetCore.Authentication.OAuth.OAuthEvents
+        {
+            OnRemoteFailure = context =>
+            {
+                Console.WriteLine($"Google OAuth remote failure: {context.Failure?.Message}");
+                context.HandleResponse();
+                context.Response.Redirect("/Identity/Account/Login?error=oauth_failed");
+                return Task.CompletedTask;
+            }
+        };
     });
 }
 else
@@ -111,6 +123,18 @@ if (!string.IsNullOrEmpty(facebookAppId) && facebookAppId != "YOUR_FACEBOOK_APP_
         options.CorrelationCookie.SecurePolicy = builder.Environment.IsProduction() ? CookieSecurePolicy.Always : CookieSecurePolicy.SameAsRequest;
         options.CorrelationCookie.HttpOnly = true;
         options.CorrelationCookie.MaxAge = TimeSpan.FromMinutes(5);
+        
+        // Configure events to handle data protection issues
+        options.Events = new Microsoft.AspNetCore.Authentication.OAuth.OAuthEvents
+        {
+            OnRemoteFailure = context =>
+            {
+                Console.WriteLine($"Facebook OAuth remote failure: {context.Failure?.Message}");
+                context.HandleResponse();
+                context.Response.Redirect("/Identity/Account/Login?error=oauth_failed");
+                return Task.CompletedTask;
+            }
+        };
     });
 }
 
@@ -123,25 +147,47 @@ var dataProtectionBuilder = builder.Services.AddDataProtection()
 // Configure data protection based on environment
 if (builder.Environment.IsProduction())
 {
-    // In production, use file system for key persistence
+    // In production, try multiple approaches for key persistence
     var keysDirectory = new DirectoryInfo("/tmp/keys");
     if (!keysDirectory.Exists)
     {
-        keysDirectory.Create();
+        try
+        {
+            keysDirectory.Create();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Warning: Could not create /tmp/keys: {ex.Message}");
+        }
     }
-    dataProtectionBuilder.PersistKeysToFileSystem(keysDirectory);
+    
+    // Try to use the keys directory if it exists and is writable
+    if (keysDirectory.Exists)
+    {
+        try
+        {
+            dataProtectionBuilder.PersistKeysToFileSystem(keysDirectory);
+            Console.WriteLine("Using /tmp/keys for data protection keys");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Warning: Could not use /tmp/keys: {ex.Message}");
+        }
+    }
+    
+    // Fallback: Use in-memory keys with longer lifetime
+    dataProtectionBuilder.SetDefaultKeyLifetime(TimeSpan.FromDays(30));
 }
 else
 {
     // In development, use default configuration
     dataProtectionBuilder.PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "keys")));
+    dataProtectionBuilder.SetDefaultKeyLifetime(TimeSpan.FromDays(90));
 }
-
-dataProtectionBuilder.SetDefaultKeyLifetime(TimeSpan.FromDays(90));
 
 var app = builder.Build();
 
-// Ensure data protection keys directory exists
+// Ensure data protection keys directory exists and test data protection
 if (app.Environment.IsProduction())
 {
     try
@@ -153,10 +199,26 @@ if (app.Environment.IsProduction())
             Console.WriteLine("Created data protection keys directory: /tmp/keys");
         }
         Console.WriteLine($"Data protection keys directory exists: {keysDirectory.Exists}");
+        
+        // Test data protection
+        var dataProtection = app.Services.GetRequiredService<Microsoft.AspNetCore.DataProtection.IDataProtectionProvider>();
+        var protector = dataProtection.CreateProtector("test");
+        var testData = "test";
+        var protectedData = protector.Protect(testData);
+        var unprotectedData = protector.Unprotect(protectedData);
+        
+        if (unprotectedData == testData)
+        {
+            Console.WriteLine("Data protection is working correctly");
+        }
+        else
+        {
+            Console.WriteLine("Warning: Data protection test failed");
+        }
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Warning: Could not create data protection keys directory: {ex.Message}");
+        Console.WriteLine($"Warning: Data protection setup failed: {ex.Message}");
     }
 }
 
