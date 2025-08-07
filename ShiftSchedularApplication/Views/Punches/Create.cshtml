@@ -13,7 +13,7 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <!-- EmployeeId will be set automatically to current user -->
-            <input type="hidden" asp-for="EmployeeId" value="" />
+            <input type="hidden" asp-for="EmployeeId" value="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" />
             <div class="form-group">
                 <label asp-for="PunchInTime" class="control-label"></label>
                 <input asp-for="PunchInTime" class="form-control" type="datetime-local" />

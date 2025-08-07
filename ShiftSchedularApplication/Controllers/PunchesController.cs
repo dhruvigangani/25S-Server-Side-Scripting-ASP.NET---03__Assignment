@@ -62,7 +62,7 @@ namespace ShiftSchedularApplication.Controllers
             if (ModelState.IsValid)
             {
                 // Set the EmployeeId to the current user's ID
-                punch.EmployeeId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                punch.EmployeeId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
                 
                 if (string.IsNullOrEmpty(punch.EmployeeId))
                 {

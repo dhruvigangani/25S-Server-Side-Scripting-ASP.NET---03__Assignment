@@ -55,7 +55,7 @@ namespace ShiftSchedularApplication.Controllers
             if (ModelState.IsValid)
             {
                 // Set the EmployeeId to the current user's ID
-                availability.EmployeeId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                availability.EmployeeId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
                 
                 if (string.IsNullOrEmpty(availability.EmployeeId))
                 {

@@ -20,17 +20,17 @@
             </div>
             <div class="form-group">
                 <label asp-for="Day" class="control-label"></label>
-                <select asp-for="Day" class="form-control"></select>
+                <select asp-for="Day" class="form-control" asp-items="@(ViewData["Day"] as SelectList)"></select>
                 <span asp-validation-for="Day" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="StartAvailability" class="control-label"></label>
-                <input asp-for="StartAvailability" class="form-control" />
+                <input asp-for="StartAvailability" class="form-control" type="time" required />
                 <span asp-validation-for="StartAvailability" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="EndAvailability" class="control-label"></label>
-                <input asp-for="EndAvailability" class="form-control" />
+                <input asp-for="EndAvailability" class="form-control" type="time" required />
                 <span asp-validation-for="EndAvailability" class="text-danger"></span>
             </div>
             <div class="form-group">
