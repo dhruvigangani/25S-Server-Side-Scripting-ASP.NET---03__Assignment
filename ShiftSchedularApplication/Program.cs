@@ -92,9 +92,22 @@ if (!string.IsNullOrEmpty(googleClientId))
         options.CorrelationCookie.HttpOnly = true;
         options.CorrelationCookie.MaxAge = TimeSpan.FromMinutes(5);
         
-        // Configure events to handle data protection issues
+        // Configure events to handle data protection issues and force HTTPS
         options.Events = new Microsoft.AspNetCore.Authentication.OAuth.OAuthEvents
         {
+            OnRedirectToAuthorizationEndpoint = context =>
+            {
+                // Force HTTPS for OAuth redirect
+                if (builder.Environment.IsProduction())
+                {
+                    var uri = new Uri(context.RedirectUri);
+                    var httpsUri = new UriBuilder(uri) { Scheme = "https" }.Uri.ToString();
+                    context.Response.Redirect(httpsUri);
+                    return Task.CompletedTask;
+                }
+                context.Response.Redirect(context.RedirectUri);
+                return Task.CompletedTask;
+            },
             OnRemoteFailure = context =>
             {
                 Console.WriteLine($"Google OAuth remote failure: {context.Failure?.Message}");
@@ -124,9 +137,22 @@ if (!string.IsNullOrEmpty(facebookAppId) && facebookAppId != "YOUR_FACEBOOK_APP_
         options.CorrelationCookie.HttpOnly = true;
         options.CorrelationCookie.MaxAge = TimeSpan.FromMinutes(5);
         
-        // Configure events to handle data protection issues
+        // Configure events to handle data protection issues and force HTTPS
         options.Events = new Microsoft.AspNetCore.Authentication.OAuth.OAuthEvents
         {
+            OnRedirectToAuthorizationEndpoint = context =>
+            {
+                // Force HTTPS for OAuth redirect
+                if (builder.Environment.IsProduction())
+                {
+                    var uri = new Uri(context.RedirectUri);
+                    var httpsUri = new UriBuilder(uri) { Scheme = "https" }.Uri.ToString();
+                    context.Response.Redirect(httpsUri);
+                    return Task.CompletedTask;
+                }
+                context.Response.Redirect(context.RedirectUri);
+                return Task.CompletedTask;
+            },
             OnRemoteFailure = context =>
             {
                 Console.WriteLine($"Facebook OAuth remote failure: {context.Failure?.Message}");
@@ -146,12 +172,6 @@ if (builder.Environment.IsProduction())
     builder.Services.Configure<Microsoft.AspNetCore.Routing.RouteOptions>(options =>
     {
         options.LowercaseUrls = true;
-    });
-    
-    // Configure URL generation
-    builder.Services.Configure<Microsoft.AspNetCore.Http.HttpContextOptions>(options =>
-    {
-        options.UseHttpsRedirection = true;
     });
 }
 
@@ -309,7 +329,7 @@ if (!app.Environment.IsDevelopment())
     {
         // Set the scheme to HTTPS for OAuth callbacks
         context.Request.Scheme = "https";
-        context.Request.Host = new Microsoft.AspNetCore.Http.HostString(context.Request.Host.Host, context.Request.Host.Port);
+        context.Request.Host = new Microsoft.AspNetCore.Http.HostString(context.Request.Host.Host, context.Request.Host.Port ?? 443);
         
         if (!context.Request.IsHttps && !context.Request.Headers["X-Forwarded-Proto"].Contains("https"))
         {
