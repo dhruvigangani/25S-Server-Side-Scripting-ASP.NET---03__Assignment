@@ -92,38 +92,7 @@ if (!string.IsNullOrEmpty(googleClientId))
         options.CorrelationCookie.HttpOnly = true;
         options.CorrelationCookie.MaxAge = TimeSpan.FromMinutes(5);
         
-        // Configure events to handle data protection issues and force HTTPS
-        options.Events = new Microsoft.AspNetCore.Authentication.OAuth.OAuthEvents
-        {
-            OnRedirectToAuthorizationEndpoint = context =>
-            {
-                Console.WriteLine($"Google OAuth redirect URI: {context.RedirectUri}");
-                // Force HTTPS for OAuth redirect
-                if (builder.Environment.IsProduction())
-                {
-                    var uri = new Uri(context.RedirectUri);
-                    var httpsUri = new UriBuilder(uri) { Scheme = "https" }.Uri.ToString();
-                    Console.WriteLine($"Google OAuth HTTPS redirect URI: {httpsUri}");
-                    context.Response.Redirect(httpsUri);
-                    return Task.CompletedTask;
-                }
-                context.Response.Redirect(context.RedirectUri);
-                return Task.CompletedTask;
-            },
-            OnRemoteFailure = context =>
-            {
-                Console.WriteLine($"Google OAuth remote failure: {context.Failure?.Message}");
-                Console.WriteLine($"Google OAuth failure details: {context.Failure?.StackTrace}");
-                context.HandleResponse();
-                context.Response.Redirect("/Identity/Account/Login?error=oauth_failed");
-                return Task.CompletedTask;
-            },
-            OnTicketReceived = context =>
-            {
-                Console.WriteLine("Google OAuth ticket received successfully");
-                return Task.CompletedTask;
-            }
-        };
+
     });
 }
 else
@@ -145,38 +114,7 @@ if (!string.IsNullOrEmpty(facebookAppId) && facebookAppId != "YOUR_FACEBOOK_APP_
         options.CorrelationCookie.HttpOnly = true;
         options.CorrelationCookie.MaxAge = TimeSpan.FromMinutes(5);
         
-        // Configure events to handle data protection issues and force HTTPS
-        options.Events = new Microsoft.AspNetCore.Authentication.OAuth.OAuthEvents
-        {
-            OnRedirectToAuthorizationEndpoint = context =>
-            {
-                Console.WriteLine($"Facebook OAuth redirect URI: {context.RedirectUri}");
-                // Force HTTPS for OAuth redirect
-                if (builder.Environment.IsProduction())
-                {
-                    var uri = new Uri(context.RedirectUri);
-                    var httpsUri = new UriBuilder(uri) { Scheme = "https" }.Uri.ToString();
-                    Console.WriteLine($"Facebook OAuth HTTPS redirect URI: {httpsUri}");
-                    context.Response.Redirect(httpsUri);
-                    return Task.CompletedTask;
-                }
-                context.Response.Redirect(context.RedirectUri);
-                return Task.CompletedTask;
-            },
-            OnRemoteFailure = context =>
-            {
-                Console.WriteLine($"Facebook OAuth remote failure: {context.Failure?.Message}");
-                Console.WriteLine($"Facebook OAuth failure details: {context.Failure?.StackTrace}");
-                context.HandleResponse();
-                context.Response.Redirect("/Identity/Account/Login?error=oauth_failed");
-                return Task.CompletedTask;
-            },
-            OnTicketReceived = context =>
-            {
-                Console.WriteLine("Facebook OAuth ticket received successfully");
-                return Task.CompletedTask;
-            }
-        };
+
     });
 }
 
@@ -191,32 +129,7 @@ if (builder.Environment.IsProduction())
     });
 }
 
-// Configure antiforgery to be less strict for OAuth
-builder.Services.Configure<Microsoft.AspNetCore.Antiforgery.AntiforgeryOptions>(options =>
-{
-    options.SuppressXFrameOptionsHeader = true;
-    options.Cookie.SameSite = SameSiteMode.Lax;
-});
 
-// Configure antiforgery to be more lenient
-builder.Services.Configure<Microsoft.AspNetCore.Antiforgery.AntiforgeryOptions>(options =>
-{
-    options.SuppressXFrameOptionsHeader = true;
-    options.Cookie.SameSite = SameSiteMode.Lax;
-    options.Cookie.SecurePolicy = builder.Environment.IsProduction() ? CookieSecurePolicy.Always : CookieSecurePolicy.SameAsRequest;
-});
-
-// Configure antiforgery to be more lenient in production
-if (builder.Environment.IsProduction())
-{
-    builder.Services.Configure<Microsoft.AspNetCore.Antiforgery.AntiforgeryOptions>(options =>
-    {
-        // Make antiforgery less strict instead of disabling completely
-        options.SuppressXFrameOptionsHeader = true;
-        options.Cookie.SameSite = SameSiteMode.Lax;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    });
-}
 
 // Note: IgnoreAntiforgeryTokenAttribute is not available in this version
 // We'll handle antiforgery issues in middleware instead
@@ -321,29 +234,7 @@ else
     app.UseHsts();
 }
 
-// Configure HTTPS redirection and security
-if (!app.Environment.IsDevelopment())
-{
-    // Disable HTTPS redirection in containerized environment
-    // app.UseHttpsRedirection();
-    
-    // Force HTTPS for OAuth providers and ensure proper URL generation
-    app.Use(async (context, next) =>
-    {
-        // Set the scheme to HTTPS for OAuth callbacks
-        context.Request.Scheme = "https";
-        context.Request.Host = new Microsoft.AspNetCore.Http.HostString(context.Request.Host.Host, context.Request.Host.Port ?? 443);
-        
-        // Check for HTTPS headers from proxy
-        if (context.Request.Headers["X-Forwarded-Proto"].Contains("https") || 
-            context.Request.Headers["X-Forwarded-For"].Any())
-        {
-            context.Request.IsHttps = true;
-        }
-        
-        await next();
-    });
-}
+
 app.UseStaticFiles();
 
 // Add security headers
@@ -358,100 +249,14 @@ app.Use(async (context, next) =>
 
 app.UseRouting();
 
-// Add middleware to disable antiforgery for auth endpoints BEFORE authentication
-app.Use(async (context, next) =>
-{
-    if (context.Request.Path.StartsWithSegments("/Identity/Account/Login", StringComparison.OrdinalIgnoreCase) ||
-        context.Request.Path.StartsWithSegments("/Identity/Account/Register", StringComparison.OrdinalIgnoreCase) ||
-        context.Request.Path.StartsWithSegments("/signin-google", StringComparison.OrdinalIgnoreCase) ||
-        context.Request.Path.StartsWithSegments("/signin-facebook", StringComparison.OrdinalIgnoreCase))
-    {
-        // Disable antiforgery for authentication endpoints
-        context.Items["DisableAntiforgery"] = true;
-        Console.WriteLine($"Disabled antiforgery for: {context.Request.Path}");
-    }
-    await next();
-});
+
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Skip antiforgery validation for authentication endpoints
-app.Use(async (context, next) =>
-{
-    if (context.Request.Path.StartsWithSegments("/signin-google") || 
-        context.Request.Path.StartsWithSegments("/signin-facebook") ||
-        context.Request.Path.StartsWithSegments("/Identity/Account/Login") ||
-        context.Request.Path.StartsWithSegments("/Identity/Account/Register"))
-    {
-        // Skip antiforgery validation for authentication endpoints
-        context.Items["SkipAntiforgery"] = true;
-        
-        // Clear any existing antiforgery cookies
-        context.Response.Cookies.Delete("__RequestVerificationToken");
-        context.Response.Cookies.Delete("__RequestVerificationToken_Lw");
-        
-        Console.WriteLine($"Authentication endpoint accessed: {context.Request.Path}");
-    }
-    await next();
-});
 
-// Add comprehensive error handling middleware
-app.Use(async (context, next) =>
-{
-    try
-    {
-        await next();
-    }
-    catch (AuthenticationFailureException ex) when (ex.Message.Contains("oauth state"))
-    {
-        // Redirect to login page with error message
-        context.Response.Redirect("/Identity/Account/Login?error=oauth_state_invalid");
-        return;
-    }
-    catch (Microsoft.AspNetCore.Antiforgery.AntiforgeryValidationException ex)
-    {
-        // Handle antiforgery token issues - just continue for auth endpoints
-        Console.WriteLine($"Antiforgery token error: {ex.Message}");
-        Console.WriteLine($"Request path: {context.Request.Path}");
-        
-        // For authentication endpoints, just continue without throwing
-        if (context.Request.Path.StartsWithSegments("/signin-google", StringComparison.OrdinalIgnoreCase) || 
-            context.Request.Path.StartsWithSegments("/signin-facebook", StringComparison.OrdinalIgnoreCase) ||
-            context.Request.Path.StartsWithSegments("/Identity/Account/Login", StringComparison.OrdinalIgnoreCase) ||
-            context.Request.Path.StartsWithSegments("/Identity/Account/Register", StringComparison.OrdinalIgnoreCase))
-        {
-            Console.WriteLine("Skipping antiforgery validation for authentication endpoint");
-            await next();
-            return;
-        }
-        throw;
-    }
-    catch (Exception ex)
-    {
-        // Log all errors
-        Console.WriteLine($"Request error: {ex.Message}");
-        Console.WriteLine($"Request path: {context.Request.Path}");
-        
-        // For OAuth endpoints, redirect to login
-        if (context.Request.Path.StartsWithSegments("/signin-google") || context.Request.Path.StartsWithSegments("/signin-facebook"))
-        {
-            Console.WriteLine($"OAuth error: {ex.Message}");
-            context.Response.Redirect("/Identity/Account/Login?error=oauth_failed");
-            return;
-        }
-        
-        // For login endpoints, redirect back to login
-        if (context.Request.Path.StartsWithSegments("/Identity/Account/Login"))
-        {
-            Console.WriteLine($"Login error: {ex.Message}");
-            context.Response.Redirect("/Identity/Account/Login?error=login_failed");
-            return;
-        }
-        
-        throw;
-    }
-});
+
+
 
 app.MapControllerRoute(
     name: "default",
