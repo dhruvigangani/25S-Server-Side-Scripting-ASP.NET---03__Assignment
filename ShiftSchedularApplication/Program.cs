@@ -8,6 +8,55 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 
+// No-op antiforgery service for production
+public class NoOpAntiforgeryService : Microsoft.AspNetCore.Antiforgery.IAntiforgery
+{
+    public Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet GetAndStoreTokens(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
+    }
+
+    public Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet GetTokens(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
+    }
+
+    public bool IsRequestValid(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        return true; // Always return true
+    }
+
+    public void SetCookieTokenAndHeader(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        // Do nothing
+    }
+
+    public async Task<Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet> GetAndStoreTokensAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
+    }
+
+    public async Task<Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet> GetTokensAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
+    }
+
+    public async Task<bool> IsRequestValidAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        return true; // Always return true
+    }
+
+    public async Task SetCookieTokenAndHeaderAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        // Do nothing
+    }
+
+    public async Task ValidateRequestAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        // Do nothing - always succeed
+    }
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
 var configConnection = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -518,55 +567,6 @@ app.MapGet("/test-seeduser", async (UserManager<IdentityUser> userManager) =>
 app.MapRazorPages();
 
 app.Run();
-
-// No-op antiforgery service for production
-public class NoOpAntiforgeryService : Microsoft.AspNetCore.Antiforgery.IAntiforgery
-{
-    public Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet GetAndStoreTokens(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
-    }
-
-    public Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet GetTokens(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
-    }
-
-    public bool IsRequestValid(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        return true; // Always return true
-    }
-
-    public void SetCookieTokenAndHeader(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        // Do nothing
-    }
-
-    public async Task<Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet> GetAndStoreTokensAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
-    }
-
-    public async Task<Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet> GetTokensAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
-    }
-
-    public async Task<bool> IsRequestValidAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        return true; // Always return true
-    }
-
-    public async Task SetCookieTokenAndHeaderAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        // Do nothing
-    }
-
-    public async Task ValidateRequestAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        // Do nothing - always succeed
-    }
-}
 
 static async Task SeedUsersAsync(UserManager<IdentityUser> userManager)
 {
