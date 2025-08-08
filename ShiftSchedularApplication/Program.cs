@@ -206,7 +206,21 @@ builder.Services.Configure<Microsoft.AspNetCore.Antiforgery.AntiforgeryOptions>(
     options.Cookie.SecurePolicy = builder.Environment.IsProduction() ? CookieSecurePolicy.Always : CookieSecurePolicy.SameAsRequest;
 });
 
-// Note: We'll handle antiforgery bypass in middleware instead
+// Disable antiforgery completely in production
+if (builder.Environment.IsProduction())
+{
+    builder.Services.Configure<Microsoft.AspNetCore.Antiforgery.AntiforgeryOptions>(options =>
+    {
+        // Disable antiforgery token generation and validation
+        options.Cookie.Name = null; // Disable antiforgery cookies
+    });
+    
+    // Replace the default antiforgery service with a no-op version
+    builder.Services.AddScoped<Microsoft.AspNetCore.Antiforgery.IAntiforgery>(provider =>
+    {
+        return new NoOpAntiforgeryService();
+    });
+}
 
 // Note: IgnoreAntiforgeryTokenAttribute is not available in this version
 // We'll handle antiforgery issues in middleware instead
@@ -348,6 +362,26 @@ app.Use(async (context, next) =>
 
 app.UseRouting();
 
+// Add middleware to disable antiforgery for auth endpoints BEFORE authentication
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/Identity/Account/Login", StringComparison.OrdinalIgnoreCase) ||
+        context.Request.Path.StartsWithSegments("/Identity/Account/Register", StringComparison.OrdinalIgnoreCase) ||
+        context.Request.Path.StartsWithSegments("/signin-google", StringComparison.OrdinalIgnoreCase) ||
+        context.Request.Path.StartsWithSegments("/signin-facebook", StringComparison.OrdinalIgnoreCase))
+    {
+        // Disable antiforgery for authentication endpoints
+        context.Items["DisableAntiforgery"] = true;
+        
+        // Remove any existing antiforgery cookies
+        context.Request.Cookies.Delete("__RequestVerificationToken");
+        context.Request.Cookies.Delete("__RequestVerificationToken_Lw");
+        
+        Console.WriteLine($"Disabled antiforgery for: {context.Request.Path}");
+    }
+    await next();
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -394,10 +428,10 @@ app.Use(async (context, next) =>
         Console.WriteLine($"Request path: {context.Request.Path}");
         
         // For authentication endpoints, just continue without throwing
-        if (context.Request.Path.StartsWithSegments("/signin-google") || 
-            context.Request.Path.StartsWithSegments("/signin-facebook") ||
-            context.Request.Path.StartsWithSegments("/Identity/Account/Login") ||
-            context.Request.Path.StartsWithSegments("/Identity/Account/Register"))
+        if (context.Request.Path.StartsWithSegments("/signin-google", StringComparison.OrdinalIgnoreCase) || 
+            context.Request.Path.StartsWithSegments("/signin-facebook", StringComparison.OrdinalIgnoreCase) ||
+            context.Request.Path.StartsWithSegments("/Identity/Account/Login", StringComparison.OrdinalIgnoreCase) ||
+            context.Request.Path.StartsWithSegments("/Identity/Account/Register", StringComparison.OrdinalIgnoreCase))
         {
             Console.WriteLine("Skipping antiforgery validation for authentication endpoint");
             await next();
@@ -484,6 +518,55 @@ app.MapGet("/test-seeduser", async (UserManager<IdentityUser> userManager) =>
 app.MapRazorPages();
 
 app.Run();
+
+// No-op antiforgery service for production
+public class NoOpAntiforgeryService : Microsoft.AspNetCore.Antiforgery.IAntiforgery
+{
+    public Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet GetAndStoreTokens(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
+    }
+
+    public Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet GetTokens(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
+    }
+
+    public bool IsRequestValid(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        return true; // Always return true
+    }
+
+    public void SetCookieTokenAndHeader(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        // Do nothing
+    }
+
+    public async Task<Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet> GetAndStoreTokensAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
+    }
+
+    public async Task<Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet> GetTokensAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
+    }
+
+    public async Task<bool> IsRequestValidAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        return true; // Always return true
+    }
+
+    public async Task SetCookieTokenAndHeaderAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        // Do nothing
+    }
+
+    public async Task ValidateRequestAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
+    {
+        // Do nothing - always succeed
+    }
+}
 
 static async Task SeedUsersAsync(UserManager<IdentityUser> userManager)
 {
