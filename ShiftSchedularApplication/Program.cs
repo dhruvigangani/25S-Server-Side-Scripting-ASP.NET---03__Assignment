@@ -206,13 +206,15 @@ builder.Services.Configure<Microsoft.AspNetCore.Antiforgery.AntiforgeryOptions>(
     options.Cookie.SecurePolicy = builder.Environment.IsProduction() ? CookieSecurePolicy.Always : CookieSecurePolicy.SameAsRequest;
 });
 
-// Disable antiforgery completely in production
+// Configure antiforgery to be more lenient in production
 if (builder.Environment.IsProduction())
 {
     builder.Services.Configure<Microsoft.AspNetCore.Antiforgery.AntiforgeryOptions>(options =>
     {
-        // Disable antiforgery token generation and validation
-        options.Cookie.Name = null; // Disable antiforgery cookies
+        // Make antiforgery less strict instead of disabling completely
+        options.SuppressXFrameOptionsHeader = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     });
 }
 
@@ -384,9 +386,6 @@ app.Use(async (context, next) =>
     {
         // Skip antiforgery validation for authentication endpoints
         context.Items["SkipAntiforgery"] = true;
-        // Also disable antiforgery for these endpoints
-        context.Request.Headers.Remove("X-CSRF-TOKEN");
-        context.Request.Headers.Remove("X-Requested-With");
         
         // Clear any existing antiforgery cookies
         context.Response.Cookies.Delete("__RequestVerificationToken");
