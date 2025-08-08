@@ -8,58 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 
-namespace ShiftSchedularApplication
-{
-    // No-op antiforgery service for production
-    public class NoOpAntiforgeryService : Microsoft.AspNetCore.Antiforgery.IAntiforgery
-{
-    public Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet GetAndStoreTokens(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
-    }
-
-    public Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet GetTokens(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
-    }
-
-    public bool IsRequestValid(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        return true; // Always return true
-    }
-
-    public void SetCookieTokenAndHeader(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        // Do nothing
-    }
-
-    public async Task<Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet> GetAndStoreTokensAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
-    }
-
-    public async Task<Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet> GetTokensAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        return new Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet("", "", "");
-    }
-
-    public async Task<bool> IsRequestValidAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        return true; // Always return true
-    }
-
-    public async Task SetCookieTokenAndHeaderAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        // Do nothing
-    }
-
-    public async Task ValidateRequestAsync(Microsoft.AspNetCore.Http.HttpContext httpContext)
-    {
-        // Do nothing - always succeed
-    }
-}
-}
-
 var builder = WebApplication.CreateBuilder(args);
 
 var configConnection = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -265,12 +213,6 @@ if (builder.Environment.IsProduction())
     {
         // Disable antiforgery token generation and validation
         options.Cookie.Name = null; // Disable antiforgery cookies
-    });
-    
-    // Replace the default antiforgery service with a no-op version
-    builder.Services.AddScoped<Microsoft.AspNetCore.Antiforgery.IAntiforgery>(provider =>
-    {
-        return new ShiftSchedularApplication.NoOpAntiforgeryService();
     });
 }
 
