@@ -198,11 +198,12 @@ builder.Services.Configure<Microsoft.AspNetCore.Antiforgery.AntiforgeryOptions>(
     options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
-// Configure antiforgery to skip validation for OAuth endpoints
+// Configure antiforgery to be more lenient
 builder.Services.Configure<Microsoft.AspNetCore.Antiforgery.AntiforgeryOptions>(options =>
 {
     options.SuppressXFrameOptionsHeader = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = builder.Environment.IsProduction() ? CookieSecurePolicy.Always : CookieSecurePolicy.SameAsRequest;
 });
 
 // Note: IgnoreAntiforgeryTokenAttribute is not available in this version
@@ -224,80 +225,12 @@ if (builder.Environment.IsProduction())
         Console.WriteLine("Using environment variable for data protection key");
     }
     
-    // Try multiple approaches for key persistence in production
-    var keysDirectory = new DirectoryInfo("/tmp/keys");
-    var appDataDirectory = new DirectoryInfo("/app/keys");
+    // Use in-memory keys only for production (no file persistence)
+    Console.WriteLine("Using in-memory data protection keys for production");
+    dataProtectionBuilder.SetDefaultKeyLifetime(TimeSpan.FromDays(365)); // Very long lifetime
     
-    // Try to create and use /tmp/keys
-    if (!keysDirectory.Exists)
-    {
-        try
-        {
-            keysDirectory.Create();
-            Console.WriteLine("Created /tmp/keys directory");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Warning: Could not create /tmp/keys: {ex.Message}");
-        }
-    }
-    
-    // Try to create and use /app/keys as fallback
-    if (!appDataDirectory.Exists)
-    {
-        try
-        {
-            appDataDirectory.Create();
-            Console.WriteLine("Created /app/keys directory");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Warning: Could not create /app/keys: {ex.Message}");
-        }
-    }
-    
-    // Try to use the keys directory if it exists and is writable
-    if (keysDirectory.Exists)
-    {
-        try
-        {
-            dataProtectionBuilder.PersistKeysToFileSystem(keysDirectory);
-            Console.WriteLine("Using /tmp/keys for data protection keys");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Warning: Could not use /tmp/keys: {ex.Message}");
-            
-            // Try fallback to /app/keys
-            if (appDataDirectory.Exists)
-            {
-                try
-                {
-                    dataProtectionBuilder.PersistKeysToFileSystem(appDataDirectory);
-                    Console.WriteLine("Using /app/keys for data protection keys");
-                }
-                catch (Exception ex2)
-                {
-                    Console.WriteLine($"Warning: Could not use /app/keys: {ex2.Message}");
-                }
-            }
-        }
-    }
-    else if (appDataDirectory.Exists)
-    {
-        try
-        {
-            dataProtectionBuilder.PersistKeysToFileSystem(appDataDirectory);
-            Console.WriteLine("Using /app/keys for data protection keys");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Warning: Could not use /app/keys: {ex.Message}");
-        }
-    }
-    
-    // Set longer lifetime for in-memory keys as last resort
-    dataProtectionBuilder.SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+    // Skip file system persistence - use in-memory only
+    Console.WriteLine("Skipping file system persistence for data protection keys");
 }
 else
 {
@@ -308,39 +241,10 @@ else
 
 var app = builder.Build();
 
-// Ensure data protection keys directory exists and test data protection
+// Log data protection configuration
 if (app.Environment.IsProduction())
 {
-    try
-    {
-        var keysDirectory = new DirectoryInfo("/tmp/keys");
-        if (!keysDirectory.Exists)
-        {
-            keysDirectory.Create();
-            Console.WriteLine("Created data protection keys directory: /tmp/keys");
-        }
-        Console.WriteLine($"Data protection keys directory exists: {keysDirectory.Exists}");
-        
-        // Test data protection
-        var dataProtection = app.Services.GetRequiredService<Microsoft.AspNetCore.DataProtection.IDataProtectionProvider>();
-        var protector = dataProtection.CreateProtector("test");
-        var testData = "test";
-        var protectedData = protector.Protect(testData);
-        var unprotectedData = protector.Unprotect(protectedData);
-        
-        if (unprotectedData == testData)
-        {
-            Console.WriteLine("Data protection is working correctly");
-        }
-        else
-        {
-            Console.WriteLine("Warning: Data protection test failed");
-        }
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Warning: Data protection setup failed: {ex.Message}");
-    }
+    Console.WriteLine("Production environment - using in-memory data protection keys");
 }
 
 // Ensure database is created and migrations are applied
@@ -408,7 +312,8 @@ else
 // Configure HTTPS redirection and security
 if (!app.Environment.IsDevelopment())
 {
-    app.UseHttpsRedirection();
+    // Disable HTTPS redirection in containerized environment
+    // app.UseHttpsRedirection();
     
     // Force HTTPS for OAuth providers and ensure proper URL generation
     app.Use(async (context, next) =>
@@ -417,12 +322,13 @@ if (!app.Environment.IsDevelopment())
         context.Request.Scheme = "https";
         context.Request.Host = new Microsoft.AspNetCore.Http.HostString(context.Request.Host.Host, context.Request.Host.Port ?? 443);
         
-        if (!context.Request.IsHttps && !context.Request.Headers["X-Forwarded-Proto"].Contains("https"))
+        // Check for HTTPS headers from proxy
+        if (context.Request.Headers["X-Forwarded-Proto"].Contains("https") || 
+            context.Request.Headers["X-Forwarded-For"].Any())
         {
-            var httpsUrl = $"https://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}";
-            context.Response.Redirect(httpsUrl, permanent: true);
-            return;
+            context.Request.IsHttps = true;
         }
+        
         await next();
     });
 }
@@ -459,7 +365,7 @@ app.Use(async (context, next) =>
     await next();
 });
 
-// Add OAuth error handling middleware
+// Add comprehensive error handling middleware
 app.Use(async (context, next) =>
 {
     try
@@ -474,26 +380,43 @@ app.Use(async (context, next) =>
     }
     catch (Microsoft.AspNetCore.Antiforgery.AntiforgeryValidationException ex)
     {
-        // Handle antiforgery token issues - just continue for OAuth endpoints
+        // Handle antiforgery token issues
         Console.WriteLine($"Antiforgery token error: {ex.Message}");
-        if (context.Request.Path.StartsWithSegments("/signin-google") || context.Request.Path.StartsWithSegments("/signin-facebook"))
+        Console.WriteLine($"Request path: {context.Request.Path}");
+        
+        // For OAuth endpoints and login endpoints, redirect to login
+        if (context.Request.Path.StartsWithSegments("/signin-google") || 
+            context.Request.Path.StartsWithSegments("/signin-facebook") ||
+            context.Request.Path.StartsWithSegments("/Identity/Account/Login"))
         {
-            // For OAuth endpoints, just continue without throwing
-            Console.WriteLine("Skipping antiforgery validation for OAuth endpoint");
-            await next();
+            Console.WriteLine("Redirecting to login due to antiforgery token error");
+            context.Response.Redirect("/Identity/Account/Login?error=antiforgery_failed");
             return;
         }
         throw;
     }
     catch (Exception ex)
     {
-        // Log OAuth errors
+        // Log all errors
+        Console.WriteLine($"Request error: {ex.Message}");
+        Console.WriteLine($"Request path: {context.Request.Path}");
+        
+        // For OAuth endpoints, redirect to login
         if (context.Request.Path.StartsWithSegments("/signin-google") || context.Request.Path.StartsWithSegments("/signin-facebook"))
         {
             Console.WriteLine($"OAuth error: {ex.Message}");
             context.Response.Redirect("/Identity/Account/Login?error=oauth_failed");
             return;
         }
+        
+        // For login endpoints, redirect back to login
+        if (context.Request.Path.StartsWithSegments("/Identity/Account/Login"))
+        {
+            Console.WriteLine($"Login error: {ex.Message}");
+            context.Response.Redirect("/Identity/Account/Login?error=login_failed");
+            return;
+        }
+        
         throw;
     }
 });
@@ -524,6 +447,27 @@ app.MapGet("/test-dataprotection", (Microsoft.AspNetCore.DataProtection.IDataPro
     catch (Exception ex)
     {
         return Results.BadRequest($"Data protection error: {ex.Message}");
+    }
+});
+
+// Add a test endpoint for seed user
+app.MapGet("/test-seeduser", async (UserManager<IdentityUser> userManager) =>
+{
+    try
+    {
+        var user = await userManager.FindByEmailAsync("dario@gc.ca");
+        if (user != null)
+        {
+            return Results.Ok($"Seed user exists: {user.Email}");
+        }
+        else
+        {
+            return Results.NotFound("Seed user not found");
+        }
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest($"Seed user test error: {ex.Message}");
     }
 });
 
