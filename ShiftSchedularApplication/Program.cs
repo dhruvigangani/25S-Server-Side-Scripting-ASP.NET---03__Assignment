@@ -8,8 +8,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 
-// No-op antiforgery service for production
-public class NoOpAntiforgeryService : Microsoft.AspNetCore.Antiforgery.IAntiforgery
+namespace ShiftSchedularApplication
+{
+    // No-op antiforgery service for production
+    public class NoOpAntiforgeryService : Microsoft.AspNetCore.Antiforgery.IAntiforgery
 {
     public Microsoft.AspNetCore.Antiforgery.AntiforgeryTokenSet GetAndStoreTokens(Microsoft.AspNetCore.Http.HttpContext httpContext)
     {
@@ -55,6 +57,7 @@ public class NoOpAntiforgeryService : Microsoft.AspNetCore.Antiforgery.IAntiforg
     {
         // Do nothing - always succeed
     }
+}
 }
 
 var builder = WebApplication.CreateBuilder(args);
@@ -267,7 +270,7 @@ if (builder.Environment.IsProduction())
     // Replace the default antiforgery service with a no-op version
     builder.Services.AddScoped<Microsoft.AspNetCore.Antiforgery.IAntiforgery>(provider =>
     {
-        return new NoOpAntiforgeryService();
+        return new ShiftSchedularApplication.NoOpAntiforgeryService();
     });
 }
 
