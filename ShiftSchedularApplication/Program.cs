@@ -75,10 +75,10 @@ builder.Services.ConfigureExternalCookie(options =>
 
 var authenticationBuilder = builder.Services.AddAuthentication();
 
-// Only add Google authentication if ClientId is provided
+// Only add Google authentication if ClientId is provided and not empty
 var googleClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID") ?? builder.Configuration["Authentication:Google:ClientId"];
 Console.WriteLine($"Google ClientId: {(string.IsNullOrEmpty(googleClientId) ? "NOT SET" : "SET")}");
-if (!string.IsNullOrEmpty(googleClientId))
+if (!string.IsNullOrEmpty(googleClientId) && googleClientId.Trim() != "")
 {
     Console.WriteLine("Adding Google authentication");
     authenticationBuilder.AddGoogle(options =>
@@ -100,9 +100,9 @@ else
     Console.WriteLine("Google authentication not configured");
 }
 
-// Only add Facebook authentication if AppId is provided
+// Only add Facebook authentication if AppId is provided and not empty
 var facebookAppId = Environment.GetEnvironmentVariable("FACEBOOK_APP_ID") ?? builder.Configuration["Authentication:Facebook:AppId"];
-if (!string.IsNullOrEmpty(facebookAppId) && facebookAppId != "YOUR_FACEBOOK_APP_ID")
+if (!string.IsNullOrEmpty(facebookAppId) && facebookAppId.Trim() != "" && facebookAppId != "YOUR_FACEBOOK_APP_ID")
 {
     authenticationBuilder.AddFacebook(options =>
     {
