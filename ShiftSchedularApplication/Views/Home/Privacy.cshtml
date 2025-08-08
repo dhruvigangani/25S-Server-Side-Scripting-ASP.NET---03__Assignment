@@ -1,6 +1,149 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="container">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
+    
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">ShiftSchedularApplication Privacy Policy</h2>
+                    <p class="text-muted mb-4">Last updated: @DateTime.Now.ToString("MMMM dd, yyyy")</p>
+
+                    <section class="mb-4">
+                        <h3 class="h5 text-primary">1. Information We Collect</h3>
+                        <p>We collect the following types of information:</p>
+                        <ul>
+                            <li><strong>Account Information:</strong> Email address, username, and password for authentication</li>
+                            <li><strong>Shift Data:</strong> Work schedules, shift times, and availability preferences</li>
+                            <li><strong>Time Tracking:</strong> Punch-in and punch-out times for accurate work hour tracking</li>
+                            <li><strong>Payroll Information:</strong> Hours worked, hourly rates, and pay stub data</li>
+                            <li><strong>Usage Data:</strong> How you interact with our application and features</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-4">
+                        <h3 class="h5 text-primary">2. How We Use Your Information</h3>
+                        <p>We use your information to:</p>
+                        <ul>
+                            <li>Provide shift management and scheduling services</li>
+                            <li>Track work hours and generate accurate pay stubs</li>
+                            <li>Manage employee availability and preferences</li>
+                            <li>Authenticate users and maintain account security</li>
+                            <li>Improve our application functionality and user experience</li>
+                            <li>Comply with legal and regulatory requirements</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-4">
+                        <h3 class="h5 text-primary">3. Data Security</h3>
+                        <p>We implement industry-standard security measures to protect your data:</p>
+                        <ul>
+                            <li><strong>Encryption:</strong> All data is encrypted in transit and at rest</li>
+                            <li><strong>Authentication:</strong> Secure login with ASP.NET Core Identity</li>
+                            <li><strong>OAuth Integration:</strong> Secure third-party authentication (Google, Facebook)</li>
+                            <li><strong>Database Security:</strong> Protected database access with proper authentication</li>
+                            <li><strong>HTTPS:</strong> All communications are secured with SSL/TLS encryption</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-4">
+                        <h3 class="h5 text-primary">4. Third-Party Services</h3>
+                        <p>We use the following third-party services:</p>
+                        <ul>
+                            <li><strong>Google OAuth:</strong> For secure login authentication</li>
+                            <li><strong>Facebook OAuth:</strong> For secure login authentication</li>
+                            <li><strong>Render.com:</strong> For application hosting and deployment</li>
+                            <li><strong>PostgreSQL:</strong> For production database storage</li>
+                        </ul>
+                        <p class="text-muted">These services have their own privacy policies, and we recommend reviewing them.</p>
+                    </section>
+
+                    <section class="mb-4">
+                        <h3 class="h5 text-primary">5. Data Retention</h3>
+                        <p>We retain your data for as long as necessary to:</p>
+                        <ul>
+                            <li>Provide our services to you</li>
+                            <li>Comply with legal obligations</li>
+                            <li>Resolve disputes and enforce agreements</li>
+                            <li>Improve our services</li>
+                        </ul>
+                        <p>You may request deletion of your account and associated data at any time.</p>
+                    </section>
+
+                    <section class="mb-4">
+                        <h3 class="h5 text-primary">6. Your Rights</h3>
+                        <p>You have the following rights regarding your data:</p>
+                        <ul>
+                            <li><strong>Access:</strong> Request a copy of your personal data</li>
+                            <li><strong>Correction:</strong> Update or correct inaccurate information</li>
+                            <li><strong>Deletion:</strong> Request deletion of your account and data</li>
+                            <li><strong>Portability:</strong> Export your data in a machine-readable format</li>
+                            <li><strong>Objection:</strong> Object to certain processing of your data</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-4">
+                        <h3 class="h5 text-primary">7. Cookies and Tracking</h3>
+                        <p>We use cookies and similar technologies to:</p>
+                        <ul>
+                            <li>Maintain your login session</li>
+                            <li>Remember your preferences</li>
+                            <li>Analyze application usage</li>
+                            <li>Improve security and prevent fraud</li>
+                        </ul>
+                        <p>You can control cookie settings through your browser preferences.</p>
+                    </section>
+
+                    <section class="mb-4">
+                        <h3 class="h5 text-primary">8. Children's Privacy</h3>
+                        <p>Our application is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13.</p>
+                    </section>
+
+                    <section class="mb-4">
+                        <h3 class="h5 text-primary">9. International Data Transfers</h3>
+                        <p>Your data may be processed and stored in countries other than your own. We ensure appropriate safeguards are in place to protect your data during international transfers.</p>
+                    </section>
+
+                    <section class="mb-4">
+                        <h3 class="h5 text-primary">10. Changes to This Policy</h3>
+                        <p>We may update this privacy policy from time to time. We will notify you of any material changes by:</p>
+                        <ul>
+                            <li>Posting the updated policy on our website</li>
+                            <li>Sending an email notification to registered users</li>
+                            <li>Displaying a notice in the application</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-4">
+                        <h3 class="h5 text-primary">11. Contact Information</h3>
+                        <p>If you have any questions about this privacy policy or our data practices, please contact us:</p>
+                        <ul>
+                            <li><strong>Email:</strong> privacy@shiftschedular.com</li>
+                            <li><strong>Support:</strong> support@shiftschedular.com</li>
+                            <li><strong>Address:</strong> [Your Company Address]</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-4">
+                        <h3 class="h5 text-primary">12. Legal Basis for Processing</h3>
+                        <p>We process your data based on the following legal grounds:</p>
+                        <ul>
+                            <li><strong>Consent:</strong> When you agree to our terms and privacy policy</li>
+                            <li><strong>Contract:</strong> To provide our shift management services</li>
+                            <li><strong>Legitimate Interest:</strong> To improve our services and prevent fraud</li>
+                            <li><strong>Legal Obligation:</strong> To comply with applicable laws and regulations</li>
+                        </ul>
+                    </section>
+
+                    <div class="alert alert-info mt-4">
+                        <h4 class="h6">GDPR Compliance</h4>
+                        <p class="mb-0">This privacy policy is designed to comply with the General Data Protection Regulation (GDPR) and other applicable privacy laws. We are committed to protecting your privacy and ensuring transparency in our data practices.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
