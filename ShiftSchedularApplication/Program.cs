@@ -366,11 +366,6 @@ app.Use(async (context, next) =>
     {
         // Disable antiforgery for authentication endpoints
         context.Items["DisableAntiforgery"] = true;
-        
-        // Remove any existing antiforgery cookies
-        context.Request.Cookies.Delete("__RequestVerificationToken");
-        context.Request.Cookies.Delete("__RequestVerificationToken_Lw");
-        
         Console.WriteLine($"Disabled antiforgery for: {context.Request.Path}");
     }
     await next();
