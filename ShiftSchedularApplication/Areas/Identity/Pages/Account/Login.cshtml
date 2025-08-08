@@ -50,10 +50,12 @@
                 {
                     <div>
                         <p>
-                            <strong>Development Mode:</strong> External authentication is disabled for local development.
+                            <strong>OAuth Configuration:</strong> External authentication is not configured.
                             <br />
                             <small class="text-muted">
-                                Use the local account login above, or test OAuth on the production site: 
+                                To enable Google and Facebook login, add your OAuth credentials to the configuration.
+                                <br />
+                                For now, use the local account login above, or test OAuth on the production site: 
                                 <a href="https://shiftschedular-application.onrender.com" target="_blank">https://shiftschedular-application.onrender.com</a>
                             </small>
                         </p>
@@ -66,7 +68,7 @@
                             <p>
                                 @foreach (var provider in Model.ExternalLogins!)
                                 {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
+                                    <button type="submit" class="btn btn-primary mb-2" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
                                         @if (provider.DisplayName == "Google")
                                         {
                                             <i class="fab fa-google"></i> @provider.DisplayName

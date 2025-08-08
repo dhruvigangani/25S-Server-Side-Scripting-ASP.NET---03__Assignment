@@ -102,7 +102,7 @@ else
 
 // Only add Facebook authentication if AppId is provided and not empty
 var facebookAppId = Environment.GetEnvironmentVariable("FACEBOOK_APP_ID") ?? builder.Configuration["Authentication:Facebook:AppId"];
-if (!string.IsNullOrEmpty(facebookAppId) && facebookAppId.Trim() != "" && facebookAppId != "YOUR_FACEBOOK_APP_ID")
+if (!string.IsNullOrEmpty(facebookAppId) && facebookAppId.Trim() != "")
 {
     authenticationBuilder.AddFacebook(options =>
     {
@@ -246,6 +246,9 @@ app.Use(async (context, next) =>
     context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
     await next();
 });
+
+// Configure HTTPS redirection
+app.UseHttpsRedirection();
 
 app.UseRouting();
 
